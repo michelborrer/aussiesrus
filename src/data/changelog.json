@@ -1,0 +1,47 @@
+{
+  "entries": [
+    {
+      "date": "2026-07-12",
+      "summary": "Launch data seed: federal Cheaper Home Batteries Program rates (STC factor 6.8 from 1 May 2026), state scheme summaries for WA/NSW/VIC/QLD/SA, FiT ranges, and reference system costs.",
+      "affectedPages": [
+        "/",
+        "/battery-rebate/",
+        "/battery-rebate/calculator/",
+        "/battery-rebate/what-changed-may-2026/",
+        "/battery-rebate/wa/",
+        "/battery-rebate/nsw/",
+        "/battery-rebate/vic/",
+        "/battery-rebate/qld/",
+        "/battery-rebate/sa/",
+        "/feed-in-tariffs/",
+        "/costs/10kwh-battery-cost/",
+        "/costs/13-5kwh-battery-cost/",
+        "/what-changed/"
+      ]
+    },
+    {
+      "date": "2026-05-01",
+      "summary": "Federal program moved from flat STC factor to three-tier structure (100% / 60% / 15%). STC factor set at 6.8.",
+      "affectedPages": [
+        "/battery-rebate/",
+        "/battery-rebate/what-changed-may-2026/",
+        "/battery-rebate/calculator/"
+      ]
+    },
+    {
+      "date": "2026-01-01",
+      "summary": "Federal STC factor stepped down to 8.4 (flat rate, pre-tier era).",
+      "affectedPages": ["/battery-rebate/", "/battery-rebate/what-changed-may-2026/"]
+    },
+    {
+      "date": "2025-07-01",
+      "summary": "Cheaper Home Batteries Program commenced with flat STC factor 9.3.",
+      "affectedPages": ["/battery-rebate/"]
+    },
+    {
+      "date": "2024-12-01",
+      "summary": "Noted: SolarQuotes acquired by Origin Energy (relevant to independence comparison pages).",
+      "affectedPages": ["/compare/who-owns-solarquotes/", "/compare/solarquotes-alternatives/", "/about/"]
+    }
+  ]
+}

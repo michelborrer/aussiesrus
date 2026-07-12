@@ -1,0 +1,54 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  type?: 'button' | 'submit';
+}
+
+const { href, variant = 'primary', type = 'button' } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class:list={['cta', `cta--${variant}`]}
+  href={href}
+  type={href ? undefined : type}
+>
+  <slot />
+</Tag>
+
+<style>
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--s-5);
+    border-radius: var(--r-s);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .cta--primary {
+    background: var(--sun);
+    color: var(--ink);
+  }
+
+  .cta--primary:hover {
+    filter: brightness(0.92);
+  }
+
+  .cta--secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .cta--secondary:hover {
+    background: var(--paper-dim);
+  }
+</style>

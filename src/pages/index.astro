@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import RateBoard from '../components/RateBoard.astro';
+import PathwayCard from '../components/PathwayCard.astro';
+import CtaButton from '../components/CtaButton.astro';
+import { getChangelog, getRebates } from '../lib/data';
+import { dollarsPerUsableKwh, formatDateLong } from '../lib/rebate';
+import { SITE } from '../lib/site';
+
+const rebates = getRebates();
+const perKwh = dollarsPerUsableKwh(rebates);
+const changelog = getChangelog().entries.slice(0, 5);
+
+const description = `Currently $${perKwh.toFixed(0)} per usable kWh under the Cheaper Home Batteries Program. Verified figures, no hype.`;
+---
+
+<Base title={SITE.lockup} description={description} ogTitle={SITE.lockup}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>Australia's independent solar &amp; battery guide</h1>
+        <p class="hero-sub">
+          Every figure on this site is verified against the regulator and stamped with the date we
+          checked it. When the rebate drops, we tell you — before it happens.
+        </p>
+        <CtaButton href="/battery-rebate/calculator/">Calculate my rebate</CtaButton>
+      </div>
+      <RateBoard variant="hero" />
+    </div>
+  </section>
+
+  <section class="pathways wrap" aria-labelledby="pathways-heading">
+    <h2 id="pathways-heading" class="sr-only">Start here</h2>
+    <div class="pathway-grid">
+      <PathwayCard
+        href="/battery-rebate/calculator/"
+        title="How much rebate will I get?"
+        description="Enter your battery size and see the federal discount at current rates."
+      />
+      <PathwayCard
+        href="/guides/is-a-battery-worth-it/"
+        title="Is a battery worth it?"
+        description="Honest payback maths — including when a battery is not the right move yet."
+      />
+      <PathwayCard
+        href="/battery-rebate/#state-stacking"
+        title="Your state rebates"
+        description="What stacks with the federal discount in WA, NSW, VIC, QLD and SA."
+      />
+    </div>
+  </section>
+
+  <section class="recent wrap" aria-labelledby="recent-heading">
+    <div class="recent-head">
+      <h2 id="recent-heading">Recently verified</h2>
+      <a href="/what-changed/">Full changelog →</a>
+    </div>
+    <ol class="changelog-feed">
+      {
+        changelog.map((entry) => (
+          <li>
+            <time class="fig" datetime={entry.date}>
+              {formatDateLong(entry.date)}
+            </time>
+            <p>{entry.summary}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: var(--s-8) 0 var(--s-7);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+
+  .hero-sub {
+    font-size: 1.125rem;
+    max-width: 38ch;
+    margin-bottom: var(--s-5);
+    color: var(--ink);
+  }
+
+  .pathways {
+    padding: var(--s-8) 0;
+  }
+
+  .pathway-grid {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .recent {
+    padding-bottom: var(--s-8);
+  }
+
+  .recent-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+    margin-bottom: var(--s-5);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: var(--s-3);
+  }
+
+  .recent-head h2 {
+    margin: 0;
+  }
+
+  .changelog-feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .changelog-feed time {
+    display: block;
+    color: var(--eucalypt);
+    font-size: var(--t-meta);
+    margin-bottom: var(--s-1);
+  }
+
+  .changelog-feed p {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .pathway-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: var(--s-7);
+    }
+  }
+</style>

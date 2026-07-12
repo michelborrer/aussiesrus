@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "program": "Cheaper Home Batteries Program",
+    "administrator": "Clean Energy Regulator",
+    "sourceUrl": "https://www.dcceew.gov.au/energy/programs/cheaper-home-batteries",
+    "lastVerified": "2026-07-12",
+    "programEnd": 2030
+  },
+  "stcPrice": {
+    "headline": 40,
+    "netAssumed": 37,
+    "note": "Households typically receive slightly less than headline after admin costs."
+  },
+  "current": {
+    "effectiveFrom": "2026-05-01",
+    "stcFactor": 6.8,
+    "tiers": [
+      { "fromKwh": 0, "toKwh": 14, "factorPct": 100 },
+      { "fromKwh": 14, "toKwh": 28, "factorPct": 60 },
+      { "fromKwh": 28, "toKwh": 50, "factorPct": 15 }
+    ],
+    "usableCapCapKwh": 50,
+    "eligibleNominalRangeKwh": [5, 100]
+  },
+  "schedule": [
+    { "effectiveFrom": "2027-01-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2027-07-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2028-01-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2028-07-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2029-01-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2029-07-01", "stcFactor": null, "status": "announced" },
+    { "effectiveFrom": "2030-01-01", "stcFactor": null, "status": "announced" }
+  ],
+  "history": [
+    { "effectiveFrom": "2025-07-01", "stcFactor": 9.3, "flat": true },
+    { "effectiveFrom": "2026-01-01", "stcFactor": 8.4, "flat": true },
+    { "effectiveFrom": "2026-05-01", "stcFactor": 6.8, "flat": false }
+  ]
+}

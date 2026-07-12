@@ -1,0 +1,179 @@
+---
+import Base from './Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import RateBoard from '../components/RateBoard.astro';
+import VerifiedStamp from '../components/VerifiedStamp.astro';
+import { SITE } from '../lib/site';
+import { formatDateLong, maxDate } from '../lib/rebate';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  crumbs: Crumb[];
+  updated: string;
+  verified?: string;
+  showMiniBoard?: boolean;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  crumbs,
+  updated,
+  verified,
+  showMiniBoard = true,
+  noindex = false,
+  jsonLd = [],
+} = Astro.props;
+
+const dateModified = maxDate(updated, verified);
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  dateModified,
+  author: {
+    '@type': 'Organization',
+    name: SITE.name,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+  },
+  mainEntityOfPage: new URL(Astro.url.pathname, SITE.url).href,
+};
+---
+
+<Base title={title} description={description} noindex={noindex} jsonLd={[articleLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])]}>
+  <div class="article-shell">
+    <div class="wrap article-grid">
+      <div class="article-main">
+        <Breadcrumbs items={crumbs} />
+        <header class="article-head">
+          <h1>{title}</h1>
+          {
+            verified && (
+              <div class="article-meta">
+                <VerifiedStamp date={verified} />
+                <p class="meta">Updated {formatDateLong(dateModified)}</p>
+              </div>
+            )
+          }
+        </header>
+        <div class="mobile-board">
+          {showMiniBoard && <RateBoard variant="mini" />}
+        </div>
+        <div class="prose measure">
+          <slot />
+        </div>
+      </div>
+      {
+        showMiniBoard && (
+          <aside class="article-rail" aria-label="Rebate snapshot">
+            <div class="rail-sticky">
+              <RateBoard variant="mini" />
+              <nav class="toc" aria-label="On this page">
+                <p class="toc-label">On this page</p>
+                <slot name="toc" />
+              </nav>
+            </div>
+          </aside>
+        )
+      }
+    </div>
+  </div>
+</Base>
+
+<style>
+  .article-shell {
+    padding: var(--s-6) 0 var(--s-9);
+  }
+
+  .article-grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .article-head {
+    margin-bottom: var(--s-5);
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    margin-top: var(--s-4);
+  }
+
+  .article-meta .meta {
+    margin: 0;
+  }
+
+  .mobile-board {
+    margin-bottom: var(--s-6);
+  }
+
+  .article-rail {
+    display: none;
+  }
+
+  .toc-label {
+    font-size: var(--t-meta);
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: var(--s-5) 0 var(--s-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .toc :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc :global(li + li) {
+    margin-top: var(--s-2);
+  }
+
+  .toc :global(a) {
+    font-size: var(--t-meta);
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .toc :global(a:hover) {
+    color: var(--eucalypt);
+  }
+
+  @media (min-width: 1024px) {
+    .article-grid {
+      grid-template-columns: minmax(0, 1fr) var(--rail);
+      gap: var(--s-7);
+      align-items: start;
+    }
+
+    .mobile-board {
+      display: none;
+    }
+
+    .article-rail {
+      display: block;
+    }
+
+    .rail-sticky {
+      position: sticky;
+      top: var(--s-5);
+    }
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FaqItem[];
+}
+
+const { items } = Astro.props;
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<section class="faq" aria-label="Frequently asked questions">
+  <h2>Frequently asked questions</h2>
+  {
+    items.map((item) => (
+      <details class="faq-item">
+        <summary>{item.question}</summary>
+        <div class="faq-answer">
+          <p>{item.answer}</p>
+        </div>
+      </details>
+    ))
+  }
+</section>
+<script is:inline type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+<style>
+  .faq {
+    margin-top: var(--s-7);
+  }
+
+  .faq-item {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-item:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  summary {
+    cursor: pointer;
+    min-height: 44px;
+    padding: var(--s-4) 0;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    float: right;
+    color: var(--eucalypt);
+  }
+
+  details[open] summary::after {
+    content: '–';
+  }
+
+  .faq-answer {
+    padding-bottom: var(--s-4);
+    color: var(--ink);
+  }
+</style>

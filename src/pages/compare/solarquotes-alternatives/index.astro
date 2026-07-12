@@ -1,0 +1,135 @@
+---
+import Article from '../../../layouts/Article.astro';
+import DataTable from '../../../components/DataTable.astro';
+import Callout from '../../../components/Callout.astro';
+import { SITE } from '../../../lib/site';
+
+const description =
+  'Fair comparison of SolarQuotes alternatives for Australian solar and battery buyers — marketplaces, government tools, going direct, and independent information sites.';
+---
+
+<Article
+  title="SolarQuotes alternatives for Australian buyers"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Compare', href: '/compare/solarquotes-alternatives/' },
+    { label: 'SolarQuotes alternatives' },
+  ]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#table">Comparison table</a></li>
+      <li><a href="#marketplaces">Quote marketplaces</a></li>
+      <li><a href="#government">Government resources</a></li>
+      <li><a href="#direct">Going direct</a></li>
+      <li><a href="#us">Where we fit</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    Looking for SolarQuotes alternatives usually means you want another way to gather installer quotes —
+    or you want information without entering a lead form yet. Both are reasonable. This page compares
+    common paths fairly, including SolarQuotes itself. Ownership context for major marketplaces is on{' '}
+    <a href="/compare/who-owns-solarquotes/">who owns SolarQuotes</a>.
+  </p>
+
+  <h2 id="table">Comparison at a glance</h2>
+  <DataTable
+    caption="Quote and research channels (descriptive, not a ranked league table)"
+    headers={['Channel', 'What you get', 'Watch for', 'Independence note']}
+    rows={[
+      [
+        'SolarQuotes',
+        'Installer quotes + large content library',
+        'Lead consent and follow-up volume',
+        'Owned by Origin Energy (Dec 2024)',
+      ],
+      [
+        'Solar Choice',
+        'Quotes and solar research tools',
+        'Same — marketplace dynamics',
+        'Owned by Flow Power (2025)',
+      ],
+      [
+        'Other lead marketplaces',
+        'Multiple installer contacts',
+        'Quality varies; spam risk if consent is broad',
+        'Check parent company and privacy text',
+      ],
+      [
+        'Energy Made Easy / state sites',
+        'Plan comparison and official scheme pages',
+        'Not an installer marketplace',
+        'Government — use for tariffs and scheme rules',
+      ],
+      [
+        'Going direct to installers',
+        'Control over who you talk to',
+        'You do the shortlisting work',
+        'No marketplace owner in the middle',
+      ],
+      [
+        SITE.name,
+        'Verified rebate/cost information',
+        'Not a full quote desk in Phase 1',
+        'Independent; ads/affiliates disclosed',
+      ],
+    ]}
+  />
+
+  <h2 id="marketplaces">Quote marketplaces</h2>
+  <p>
+    Marketplaces exist because comparing three CEC-accredited installers is tedious. SolarQuotes and Solar
+    Choice popularised that model in Australia: you submit details, matched installers respond, content
+    helps you prepare. That service has real value when you want speed.
+  </p>
+  <p>
+    Trade-offs are consistent across the category: you are a lead, follow-up can be persistent, and the
+    platform’s owner may sit in the energy value chain. Rate SolarQuotes fairly on execution — many
+    households have used it successfully — while still reading the ownership and consent lines.
+  </p>
+
+  <h2 id="government">Government and regulator resources</h2>
+  <ul>
+    <li>
+      <a href="https://www.energymadeeasy.gov.au/">Energy Made Easy</a> — compare retail electricity plans
+      (NEM jurisdictions).
+    </li>
+    <li>
+      <a href="https://www.dcceew.gov.au/energy/programs/cheaper-home-batteries">Cheaper Home Batteries Program</a>{' '}
+      — federal battery rebate primary page.
+    </li>
+    <li>State energy and Solar Victoria / Energy Policy WA pages for local schemes.</li>
+    <li>Clean Energy Council resources for accredited installer and approved product lists.</li>
+  </ul>
+  <p>
+    These will not phone you with a quote. They will keep your rebate and tariff facts anchored when a
+    salesperson’s brochure drifts.
+  </p>
+
+  <h2 id="direct">Going direct</h2>
+  <p>
+    Ask neighbours for installer names, confirm CEC accreditation, and request written quotes with the
+    same usable kWh, product, and inclusions. Direct quotes take longer to organise and often produce
+    clearer scope control. Use our{' '}
+    <a href="/battery-rebate/calculator/">rebate calculator</a> so each quote’s “discount” line can be
+    checked against current federal maths.
+  </p>
+
+  <h2 id="us">Where Aussies R Us fits</h2>
+  <Callout type="note" title="Information site, not (yet) a quote service">
+    <p>
+      We appear in the table as an information site. Phase 1 is ads and disclosed affiliates. A gated quote
+      form exists for a later phase; it is not pushed in navigation. We will not pretend to be a
+      marketplace while we are still a numbers desk.
+    </p>
+  </Callout>
+  <p>
+    Start with <a href="/battery-rebate/">current rebate rates</a>,{' '}
+    <a href="/guides/is-a-battery-worth-it/">is a battery worth it?</a>, and your{' '}
+    <a href="/battery-rebate/wa/">state stacking page</a>. Then choose a quote channel consciously.
+  </p>
+</Article>

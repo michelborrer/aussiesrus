@@ -1,0 +1,28 @@
+---
+import Article from '../../layouts/Article.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import { SITE } from '../../lib/site';
+
+const description = `Contact ${SITE.name} — questions about rebate figures, corrections, or press.`;
+---
+
+<Article
+  title="Contact"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <p>
+    For corrections, data questions, or press: email{' '}
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or use the form below. We are not a same-day
+    installer dispatch desk — for install quotes see the (currently unlisted){' '}
+    <a href="/quotes/">quote form</a> when you are ready.
+  </p>
+  <p>
+    Operator: {SITE.operator} · ABN: {SITE.abn} · Based in Western Australia.
+  </p>
+
+  <h2>Send a message</h2>
+  <QuoteForm type="contact" />
+</Article>

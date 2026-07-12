@@ -1,0 +1,177 @@
+---
+import { getRebates } from '../lib/data';
+import { dollarsPerUsableKwh, formatDateLong, nextStepDown } from '../lib/rebate';
+import VerifiedStamp from './VerifiedStamp.astro';
+
+interface Props {
+  variant?: 'hero' | 'mini';
+}
+
+const { variant = 'hero' } = Astro.props;
+const rebates = getRebates();
+const perKwh = dollarsPerUsableKwh(rebates);
+const next = nextStepDown(rebates);
+const verified = rebates.meta.lastVerified;
+---
+
+<aside class:list={['rate-board', `rate-board--${variant}`]} aria-label="Federal battery rebate current rates">
+  <p class="board-label">Federal battery rebate — current rates</p>
+  <dl class="board-figures">
+    <div class="board-row board-row--1">
+      <dt>per usable kWh</dt>
+      <dd>
+        <span class="fig board-fig">${perKwh.toFixed(0)}</span>
+      </dd>
+    </div>
+    <div class="board-row board-row--2">
+      <dt>STC factor</dt>
+      <dd>
+        <span class="fig board-fig">{rebates.current.stcFactor}</span>
+      </dd>
+    </div>
+    <div class="board-row board-row--3">
+      <dt>next step-down</dt>
+      <dd>
+        {
+          next ? (
+            <>
+              <span class="fig board-fig board-fig--date">{formatDateLong(next.date)}</span>
+              <span class="board-countdown">in {next.days} days</span>
+            </>
+          ) : (
+            <span class="fig board-fig">—</span>
+          )
+        }
+      </dd>
+    </div>
+  </dl>
+  <div class="board-foot">
+    <VerifiedStamp date={verified} dark />
+    <a class="board-link" href="/what-changed/">See what changed →</a>
+  </div>
+</aside>
+
+<style>
+  .rate-board {
+    background: var(--panel);
+    color: var(--paper);
+    border-radius: var(--r-m);
+    padding: var(--s-6);
+  }
+
+  .rate-board--mini {
+    padding: var(--s-5);
+  }
+
+  .board-label {
+    margin: 0 0 var(--s-5);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: semi-expanded;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--paper) 72%, transparent);
+  }
+
+  .board-figures {
+    margin: 0;
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .board-row {
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .board-row dt {
+    font-size: var(--t-meta);
+    color: color-mix(in srgb, var(--paper) 70%, transparent);
+  }
+
+  .board-row dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
+
+  .board-fig {
+    font-size: var(--t-board);
+    font-weight: 500;
+    color: var(--sun);
+    line-height: 1.1;
+  }
+
+  .rate-board--mini .board-fig {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  }
+
+  .board-fig--date {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  }
+
+  .board-countdown {
+    font-family: var(--font-data);
+    font-size: var(--t-meta);
+    color: var(--paper);
+  }
+
+  .board-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-top: var(--s-5);
+    padding-top: var(--s-4);
+    border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
+  }
+
+  .board-link {
+    color: var(--paper);
+    font-size: var(--t-meta);
+    text-decoration: none;
+  }
+
+  .board-link:hover {
+    text-decoration: underline;
+  }
+
+  .board-row--1,
+  .board-row--2,
+  .board-row--3 {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: boardIn 200ms ease forwards;
+  }
+
+  .board-row--1 {
+    animation-delay: 40ms;
+  }
+  .board-row--2 {
+    animation-delay: 100ms;
+  }
+  .board-row--3 {
+    animation-delay: 160ms;
+  }
+
+  @keyframes boardIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .board-row--1,
+    .board-row--2,
+    .board-row--3 {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+</style>

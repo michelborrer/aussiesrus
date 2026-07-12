@@ -1,0 +1,102 @@
+---
+interface Props {
+  caption?: string;
+  headers: string[];
+  rows: (string | number)[][];
+  numericCols?: number[];
+}
+
+const { caption, headers, rows, numericCols = [] } = Astro.props;
+---
+
+<div class="table-wrap">
+  <table>
+    {caption && <caption>{caption}</caption>}
+    <thead>
+      <tr>
+        {
+          headers.map((h) => (
+            <th scope="col">{h}</th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            {row.map((cell, i) => (
+              <td class:list={[{ fig: numericCols.includes(i), num: numericCols.includes(i) }]}>
+                {cell}
+              </td>
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: var(--s-5) 0;
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 520px;
+  }
+
+  caption {
+    text-align: left;
+    padding: var(--s-3) var(--s-4);
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+
+  th {
+    background: var(--panel);
+    color: var(--paper);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: semi-expanded;
+    font-size: var(--t-meta);
+    text-align: left;
+    padding: var(--s-3) var(--s-4);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  tbody tr:nth-child(even) td {
+    background: var(--paper-dim);
+  }
+
+  td.num {
+    text-align: right;
+  }
+
+  td:first-child,
+  th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+
+  th:first-child {
+    z-index: 2;
+  }
+
+  tbody tr:nth-child(even) td:first-child {
+    background: var(--paper-dim);
+  }
+</style>

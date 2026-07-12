@@ -1,0 +1,411 @@
+---
+import Article from '../../../layouts/Article.astro';
+import TierBar from '../../../components/TierBar.astro';
+import DataTable from '../../../components/DataTable.astro';
+import Callout from '../../../components/Callout.astro';
+import Fig from '../../../components/Fig.astro';
+import { getRebates, getStates, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  formatAud,
+  formatDateLong,
+  nextStepDown,
+} from '../../../lib/rebate';
+import type { CalcConfig } from '../../../islands/calculator';
+
+const rebates = getRebates();
+const systems = getSystems().systems;
+const statesData = getStates().states;
+const next = nextStepDown(rebates);
+const verified = rebates.meta.lastVerified;
+
+const examples = systems.map((s) => {
+  const r = calculateFederalRebate(s.usableKwh, rebates);
+  return [
+    s.label,
+    `${s.usableKwh} × ${rebates.current.stcFactor} (tiered)`,
+    String(r.stcCount),
+    formatAud(r.federalRebate),
+  ];
+});
+
+const calcConfig: CalcConfig = {
+  rebates,
+  systems,
+  states: statesData.map((s) => ({
+    code: s.code,
+    name: s.name,
+    schemes: s.schemes.map((scheme) => ({
+      name: scheme.name,
+      type: scheme.type,
+      stacksWithFederal: scheme.stacksWithFederal,
+      status: scheme.status,
+      sourceUrl: scheme.sourceUrl,
+      note: scheme.value.note?.replace(/\s*⚠ VERIFY[^.]*\.?/g, '').trim(),
+      amountLabel:
+        scheme.value.kind === 'perKwh'
+          ? `$${scheme.value.amount} / ${scheme.value.unit}${scheme.cap != null ? ` (cap $${scheme.cap})` : ''}`
+          : scheme.value.amount > 0
+            ? `About $${scheme.value.amount}`
+            : 'Amount varies — see source',
+    })),
+  })),
+};
+
+const appLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Aussies R Us battery rebate calculator',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any',
+  url: 'https://aussiesrus.com.au/battery-rebate/calculator/',
+  offers: { '@type': 'Offer', price: 0, priceCurrency: 'AUD' },
+};
+
+const description = `Estimate your Cheaper Home Batteries discount from usable kWh. Current STC factor ${rebates.current.stcFactor}, net STC price $${rebates.stcPrice.netAssumed}.`;
+---
+
+<Article
+  title="Battery rebate calculator"
+  description={description}
+  crumbs={[
+    { label: 'Battery rebate', href: '/battery-rebate/' },
+    { label: 'Calculator' },
+  ]}
+  updated="2026-07-12"
+  verified={verified}
+  showMiniBoard={false}
+  jsonLd={appLd}
+>
+  <p>
+    Enter your battery’s usable capacity to estimate the federal Cheaper Home Batteries discount at
+    today’s rules (STC factor <Fig>{rebates.current.stcFactor}</Fig> from
+    <Fig>{formatDateLong(rebates.current.effectiveFrom)}</Fig>). State schemes appear below the
+    federal result for stacking context — we display them; we don’t invent a combined total, because
+    eligibility varies.
+  </p>
+
+  <noscript>
+    <Callout type="note" title="JavaScript needed for the interactive tool">
+      <p>
+        The live calculator needs JavaScript. The worked examples below use the same formula and
+        current data file values.
+      </p>
+    </Callout>
+  </noscript>
+
+  <div id="calc-root" class="calc" data-config={JSON.stringify(calcConfig)}>
+    <div class="calc-grid">
+      <section class="calc-inputs" aria-label="Calculator inputs">
+        <div class="field">
+          <label for="kwh">Usable battery capacity (kWh)</label>
+          <input id="kwh" type="number" min="5" max="100" step="0.5" value="13.5" />
+          <input id="kwh-slider" type="range" min="5" max="100" step="0.5" value="13.5" />
+          <div class="presets">
+            {
+              systems.map((s) => (
+                <button type="button" class="chip" data-preset={s.id}>
+                  {s.usableKwh} kWh
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="state">State</label>
+          <select id="state">
+            {
+              statesData.map((s) => (
+                <option value={s.code} selected={s.code === 'wa'}>
+                  {s.name}
+                </option>
+              ))
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="cost">Installed cost before rebates ($)</label>
+          <input id="cost" type="number" min="0" step="100" placeholder="Optional" />
+        </div>
+
+        <details class="advanced">
+          <summary>Advanced: STC price</summary>
+          <div class="field">
+            <label for="stc-price">STC price assumed ($)</label>
+            <input
+              id="stc-price"
+              type="number"
+              min="30"
+              max="45"
+              step="1"
+              value={rebates.stcPrice.netAssumed}
+            />
+            <p class="hint">{rebates.stcPrice.note} Headline ≈ ${rebates.stcPrice.headline}.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="calc-out" aria-label="Calculator results">
+        <div class="result-board">
+          <p class="result-label">Federal rebate</p>
+          <p class="result-primary fig" data-out="rebate" aria-live="polite">—</p>
+          <dl class="result-meta">
+            <div>
+              <dt>STCs</dt>
+              <dd class="fig" data-out="stcs">—</dd>
+            </div>
+            <div>
+              <dt>Share of cost</dt>
+              <dd class="fig" data-out="pct">—</dd>
+            </div>
+            <div>
+              <dt>Net cost</dt>
+              <dd class="fig" data-out="net">—</dd>
+            </div>
+          </dl>
+          <p class="notice" data-out="notice"></p>
+          <button type="button" class="copy" data-copy>Copy link to this result</button>
+        </div>
+
+        <div class="tier-wrap">
+          <div class="live-tier">
+            <TierBar />
+            <div class="live-marker" data-marker hidden></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="schemes" aria-label="State stacking schemes">
+      <h2>State schemes (displayed, not summed)</h2>
+      <p class="hint">
+        Stacking depends on eligibility. Treat these as leads to verify — not a guaranteed extra
+        discount.
+      </p>
+      <div data-out="schemes"></div>
+    </section>
+  </div>
+
+  <h2>How the maths works</h2>
+  <p>
+    Eligible usable capacity is capped at <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh. For each
+    tier band, we take the width of your capacity inside that band, multiply by the STC factor
+    (<Fig>{rebates.current.stcFactor}</Fig>), multiply by the band’s percentage, then sum. STCs are
+    whole certificates only (<code>floor</code>), then multiplied by your assumed STC price.
+  </p>
+
+  <DataTable
+    caption="Static worked examples at current data-file rates"
+    headers={['System', 'Calculation sketch', 'STCs', `Rebate @ $${rebates.stcPrice.netAssumed}`]}
+    rows={examples}
+    numericCols={[2, 3]}
+  />
+
+  <Callout type="note" title="Assumptions">
+    <ul>
+      <li>Install date determines the rate that applies.</li>
+      {
+        next && (
+          <li>
+            Next announced step-down: <Fig>{formatDateLong(next.date)}</Fig>.
+          </li>
+        )
+      }
+      <li>Figures are estimates. Your installer’s invoice and CER rules govern.</li>
+      <li>Not financial advice.</li>
+    </ul>
+  </Callout>
+
+  <p>
+    More context on the <a href="/battery-rebate/">federal battery rebate hub</a> and
+    <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a>.
+  </p>
+</Article>
+
+<script>
+  import { initCalculator } from '../../../islands/calculator';
+
+  const root = document.getElementById('calc-root');
+  if (root) {
+    const config = JSON.parse(root.dataset.config || '{}');
+    initCalculator(root, config);
+  }
+</script>
+
+<style>
+  .calc {
+    margin: var(--s-6) 0 var(--s-7);
+    max-width: 1120px;
+  }
+
+  .calc-grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .calc-inputs,
+  .result-board {
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+    padding: var(--s-5);
+    background: var(--paper);
+  }
+
+  .result-board {
+    background: var(--panel);
+    color: var(--paper);
+    border-color: var(--panel);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--s-2);
+    margin-bottom: var(--s-4);
+  }
+
+  label {
+    font-weight: 600;
+  }
+
+  input,
+  select {
+    min-height: 44px;
+    padding: var(--s-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-s);
+    font: inherit;
+  }
+
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .chip {
+    min-height: 44px;
+    padding: 0 var(--s-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-s);
+    background: var(--paper-dim);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .chip:hover {
+    border-color: var(--eucalypt);
+  }
+
+  .advanced summary {
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hint {
+    margin: 0;
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+
+  .result-label {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  .result-primary {
+    margin: var(--s-2) 0 var(--s-4);
+    font-size: var(--t-board);
+    font-weight: 500;
+    color: var(--sun);
+  }
+
+  .result-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-3);
+    margin: 0 0 var(--s-4);
+  }
+
+  .result-meta dt {
+    font-size: var(--t-meta);
+    opacity: 0.7;
+  }
+
+  .result-meta dd {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .notice {
+    min-height: 1.3em;
+    font-size: var(--t-meta);
+    margin: 0 0 var(--s-4);
+  }
+
+  .copy {
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    border-radius: var(--r-s);
+    border: 1px solid color-mix(in srgb, var(--paper) 35%, transparent);
+    background: transparent;
+    color: var(--paper);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .live-tier {
+    position: relative;
+  }
+
+  .live-marker {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 28px;
+    background: var(--ink);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .schemes {
+    margin-top: var(--s-6);
+  }
+
+  .schemes :global(.scheme-row) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .schemes :global(.badge) {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--r-s);
+    background: var(--paper-dim);
+    font-size: var(--t-meta);
+    margin-right: var(--s-2);
+  }
+
+  .schemes :global(.badge--stack) {
+    background: var(--sun-tint);
+  }
+
+  @media (min-width: 900px) {
+    .calc-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /quotes/
+
+Sitemap: https://aussiesrus.com.au/sitemap-index.xml

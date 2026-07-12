@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import PathwayCard from '../components/PathwayCard.astro';
+
+const description = "That page doesn't exist — but the rebate still does.";
+---
+
+<Base title="Page not found" description={description}>
+  <section class="wrap missing">
+    <h1>That page doesn't exist — but the rebate still does.</h1>
+    <p>
+      The link may be old, mistyped, or retired. These paths still go somewhere useful:
+    </p>
+    <div class="pathway-grid">
+      <PathwayCard
+        href="/battery-rebate/"
+        title="Federal battery rebate"
+        description="Current rates, tiers, and eligibility."
+      />
+      <PathwayCard
+        href="/battery-rebate/calculator/"
+        title="Rebate calculator"
+        description="Enter usable kWh and see the federal discount."
+      />
+      <PathwayCard
+        href="/guides/is-a-battery-worth-it/"
+        title="Is a battery worth it?"
+        description="Honest payback — including when to wait."
+      />
+      <PathwayCard
+        href="/battery-rebate/wa/"
+        title="WA stacking"
+        description="Synergy vs Horizon and DEBS context."
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .missing {
+    padding: var(--s-8) 0 var(--s-9);
+  }
+
+  .missing h1 {
+    max-width: 20ch;
+    margin-bottom: var(--s-4);
+  }
+
+  .missing > p {
+    max-width: 50ch;
+    margin-bottom: var(--s-6);
+    color: var(--ink-soft);
+  }
+
+  .pathway-grid {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  @media (min-width: 720px) {
+    .pathway-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

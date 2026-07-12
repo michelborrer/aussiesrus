@@ -1,0 +1,66 @@
+---
+import Article from '../../layouts/Article.astro';
+import { SITE } from '../../lib/site';
+
+const description = `Editorial policy for ${SITE.name}: primary sources, corrections, AI-assisted drafting, and independence standards.`;
+---
+
+<Article
+  title="Editorial policy"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Editorial policy' }]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <p>
+    {SITE.name} publishes practical information for Australian households researching solar and batteries.
+    This page sets the rules we write against.
+  </p>
+
+  <h2>Primary sources</h2>
+  <p>
+    Money figures for federal and state schemes are taken from administering agencies (for example DCCEEW,
+    the Clean Energy Regulator, and state energy departments) and stored in version-controlled data files.
+    Articles must not hardcode rebate dollars that belong in those files.
+  </p>
+
+  <h2>Verification stamps and changelog</h2>
+  <p>
+    Data-driven pages show when we last verified underlying figures. Material updates are listed on{' '}
+    <a href="/what-changed/">What changed</a> with affected URLs.
+  </p>
+
+  <h2>Corrections</h2>
+  <p>
+    If we get a fact wrong, email {SITE.email} with the URL, the incorrect statement, and a primary-source
+    link. We correct the page, update the data file when needed, and note significant corrections in the
+    changelog.
+  </p>
+
+  <h2>AI-assisted drafting</h2>
+  <p>
+    We may use AI tools to draft or edit prose. Every numerical claim about rebates, tariffs, or costs is
+    checked by a human against our data files or a primary source before publication. AI output is never
+    the authority on a dollar figure.
+  </p>
+
+  <h2>Independence and commercial relationships</h2>
+  <ul>
+    <li>We do not sell placement in editorial rankings.</li>
+    <li>Advertising and affiliate relationships are disclosed; affiliate links use rel="sponsored".</li>
+    <li>
+      Competitor ownership (for example retailer acquisitions of quote marketplaces) is reported as dated
+      fact without sneering or unverified motive claims.
+    </li>
+    <li>
+      If we operate a quote referral service, consent language and the privacy policy will describe partner
+      sharing before that form is promoted publicly.
+    </li>
+  </ul>
+
+  <h2>Voice</h2>
+  <p>
+    Australian English, sentence case, numbers before adjectives. We say when a battery is not worth it.
+    Urgency theatre around step-down dates is not allowed — publish the schedule instead.
+  </p>
+</Article>

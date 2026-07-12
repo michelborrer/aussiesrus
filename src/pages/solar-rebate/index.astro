@@ -1,0 +1,144 @@
+---
+import Article from '../../layouts/Article.astro';
+import Fig from '../../components/Fig.astro';
+import Callout from '../../components/Callout.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import CtaButton from '../../components/CtaButton.astro';
+import { getRebates } from '../../lib/data';
+import { dollarsPerUsableKwh, formatAud } from '../../lib/rebate';
+
+const rebates = getRebates();
+const perKwhBattery = dollarsPerUsableKwh(rebates);
+
+/** Illustrative STC maths for panels — deeming & zone from CER methodology; STC $ from same net assumption as batteries. */
+const panelKw = 6.6;
+const zoneRating = 1.382; // zone 3 illustrative
+const deemingYears = 2030 - 2026; // remaining deeming to program end year for illustration
+const stcPrice = rebates.stcPrice.netAssumed;
+const panelStcs = Math.floor(panelKw * zoneRating * deemingYears);
+const panelRebate = panelStcs * stcPrice;
+
+const faq = [
+  {
+    question: 'Is the solar panel rebate the same as the battery rebate?',
+    answer:
+      'No. Panels create STCs under the Small-scale Renewable Energy Scheme with zone ratings and a deeming period. Batteries under the Cheaper Home Batteries Program use a different STC factor and, since May 2026, capacity tiers. They are separate instruments that can both appear on a combined quote.',
+  },
+  {
+    question: 'Why does my installer quote fewer STCs than last year?',
+    answer:
+      'The deeming period shrinks as we approach 2030, so a system installed later creates fewer certificates even at the same kilowatt size and zone. Certificate spot prices also move.',
+  },
+  {
+    question: 'Which zone am I in?',
+    answer:
+      'The Clean Energy Regulator publishes the zone map used for STC calculations. Coastal WA, much of NSW and QLD, and other high-insolation areas sit in higher zones than southern Tasmania. Your installer should state the zone on the quote.',
+  },
+];
+
+const description = `How the solar panel STC rebate works in Australia — zones, deeming to 2030, and a ${panelKw} kW worked example. Separate from the battery program (about $${perKwhBattery.toFixed(0)}/kWh tier 1).`;
+---
+
+<Article
+  title="Solar rebate for panels: STCs explained"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Solar rebate' }]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#how">How panel STCs work</a></li>
+      <li><a href="#zones">Zone ratings</a></li>
+      <li><a href="#deeming">Deeming to 2030</a></li>
+      <li><a href="#example">6.6 kW example</a></li>
+      <li><a href="#battery">Relationship to batteries</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    The household “solar rebate” on panels is not a cheque from a single government form — it is usually
+    a point-of-sale discount funded by Small-scale Technology Certificates (STCs). Your installer creates
+    certificates based on system size, your climate zone, and the remaining deeming period to{' '}
+    <Fig>2030</Fig>, then assigns their value against the invoice. It is a different instrument from the
+    Cheaper Home Batteries Program, which currently works out to about{' '}
+    <Fig>{formatAud(perKwhBattery)}</Fig> per usable kWh in tier 1 for batteries.
+  </p>
+
+  <h2 id="how">How panel STCs work</h2>
+  <p>
+    In plain terms: eligible small-scale solar creates a number of STCs. Those certificates trade in a
+    market. Installers typically bundle the expected certificate value into your quote as a discount.
+    Headline certificate prices and what you actually receive can differ after brokerage and admin — the
+    same reason we use a net STC assumption of <Fig>{formatAud(stcPrice)}</Fig> on battery maths.
+  </p>
+
+  <h2 id="zones">Zone ratings</h2>
+  <p>
+    Australia is split into STC zones. Higher zones (stronger solar resource) create more certificates per
+    kilowatt. A <Fig>6.6</Fig> kW system in a high zone is worth more in STCs than the same array in a
+    lower zone. Always check which zone the quote uses; it should match the CER map for your postcode.
+  </p>
+
+  <h2 id="deeming">Deeming period decline to 2030</h2>
+  <p>
+    STCs for panels are “deemed” for the years of generation expected to <Fig>2030</Fig>. Each year that
+    passes, a new install has fewer deeming years left, so certificate counts fall even if panel prices
+    and zone ratings stay put. That gradual decline is built into the scheme design — not a surprise fee.
+  </p>
+  <Callout type="note" title="Illustrative maths only">
+    <p>
+      The worked example below uses a zone-3-style rating and remaining deeming years from 2026 to 2030.
+      Your postcode zone and exact deeming factor must come from the CER calculation your installer runs.
+    </p>
+  </Callout>
+
+  <h2 id="example">Worked example: {panelKw} kW in zone 3</h2>
+  <DataTable
+    caption="Illustrative STC discount for a 6.6 kW rooftop system"
+    headers={['Input', 'Value']}
+    rows={[
+      ['System size', `${panelKw} kW`],
+      ['Illustrative zone rating', String(zoneRating)],
+      ['Deeming years used here', String(deemingYears)],
+      ['STCs (floored)', String(panelStcs)],
+      ['Assumed net $/STC', formatAud(stcPrice)],
+      ['Illustrative discount', formatAud(panelRebate)],
+    ]}
+    numericCols={[1]}
+  />
+  <p>
+    Rough formula used here: floor(kW × zone rating × deeming years) × net STC price. Replace zone rating
+    and deeming with the live CER figures on your quote. For typical installed cost bands, see{' '}
+    <a href="/costs/6-6kw-solar-system-cost/">6.6 kW solar system cost</a>.
+  </p>
+
+  <h2 id="battery">Relationship to the battery program</h2>
+  <p>
+    Panel STCs and the battery rebate are <strong>separate but combinable</strong> on a solar-plus-battery
+    job when each technology meets its own rules. Do not let a quote mash them into one unexplained
+    “government discount” line. Ask for panel STC value and battery Cheaper Home Batteries value as
+    distinct rows — then check the battery line with our{' '}
+    <a href="/battery-rebate/calculator/">calculator</a>.
+  </p>
+
+  <p>
+    <CtaButton href="/costs/6-6kw-solar-system-cost/">See 6.6 kW cost guide</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href="https://www.cleanenergyregulator.gov.au/RET/Scheme-participants-and-industry/Power-stations">
+        Clean Energy Regulator — small-scale scheme
+      </a>
+    </li>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> (batteries — separate)
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

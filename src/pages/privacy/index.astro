@@ -1,0 +1,90 @@
+---
+import Article from '../../layouts/Article.astro';
+import { SITE } from '../../lib/site';
+
+const description = `Privacy policy for ${SITE.name} — what we collect, ads, affiliate links, and how quote/contact form data may be shared with partners.`;
+---
+
+<Article
+  title="Privacy policy"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacy' }]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <p>Last updated: 12 July 2026. Operator: {SITE.operator}. Contact: {SITE.email}. ABN: {SITE.abn}.</p>
+
+  <h2>Who we are</h2>
+  <p>
+    {SITE.name} ({SITE.url}) is an Australian information website about solar and home batteries. This
+    policy explains how we handle personal information under the Privacy Act 1988 (Cth) and the Australian
+    Privacy Principles.
+  </p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li>
+      <strong>Contact and quote forms:</strong> name, email, and (for quote requests) phone, postcode, and
+      consent records. Message text if you use the contact form.
+    </li>
+    <li>
+      <strong>Server and security logs:</strong> IP address, user agent, and basic request metadata via
+      Cloudflare, used for security, rate limiting, and diagnosing faults. We do not use these logs to
+      build marketing profiles.
+    </li>
+    <li>
+      <strong>Analytics:</strong> Cloudflare Web Analytics (privacy-oriented, no advertising cookies from
+      that beacon alone).
+    </li>
+    <li>
+      <strong>Advertising:</strong> if Google AdSense or similar is enabled, those providers may set cookies
+      or use identifiers subject to their own policies.
+    </li>
+  </ul>
+
+  <h2>How we use information</h2>
+  <ul>
+    <li>To respond to contact messages</li>
+    <li>To process quote requests and connect you with installers or quoting partners (when that service is active)</li>
+    <li>To secure the site and prevent spam (including Cloudflare Turnstile)</li>
+    <li>To understand aggregate traffic and improve content</li>
+  </ul>
+
+  <h2>Quote leads and sharing with partners</h2>
+  <p>
+    When you submit a quote request and tick the consent box, you agree that {SITE.name} and up to three
+    installers or quoting partners may contact you by phone, SMS or email about your request. Lead details
+    may be shared with those partners for that purpose — this is how a future quote-referral revenue line
+    would work. We use a CRM workflow (GoHighLevel or equivalent) to store and route submissions.
+  </p>
+  <p>
+    We will not sell your contact details for unrelated marketing lists. Partners must comply with the Spam
+    Act 2003 (Cth): identifiable sender, consent basis, and a functional unsubscribe for marketing messages.
+  </p>
+
+  <h2>Cookies and ads</h2>
+  <p>
+    Essential delivery uses Cloudflare. Ad partners may use cookies or local storage. Affiliate links are
+    commercial; they do not require your contact details by themselves.
+  </p>
+
+  <h2>Retention and security</h2>
+  <p>
+    Form submissions are retained as long as needed to fulfil the request, meet legal obligations, and
+    resolve disputes, then deleted or de-identified. We use HTTPS and provider access controls; no method
+    of transmission is perfectly secure.
+  </p>
+
+  <h2>Access and correction</h2>
+  <p>
+    Email {SITE.email} to request access to, or correction of, personal information we hold about you. You
+    may also complain to the Office of the Australian Information Commissioner if you are not satisfied
+    with our response.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    We may update this policy; the date above will change. Material changes affecting lead sharing will be
+    reflected here before the public quote form is promoted in navigation.
+  </p>
+</Article>

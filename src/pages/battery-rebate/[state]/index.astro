@@ -1,0 +1,253 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getRebates, getState, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+} from '../../../lib/rebate';
+
+export function getStaticPaths() {
+  return ['nsw', 'vic', 'qld', 'sa'].map((state) => ({ params: { state } }));
+}
+
+const { state: code } = Astro.params;
+const state = getState(code!)!;
+const rebates = getRebates();
+const systems = getSystems();
+const perKwh = dollarsPerUsableKwh(rebates);
+const ref = systems.systems.find((s) => s.id === '13-5kwh')!;
+const federal = calculateFederalRebate(ref.usableKwh, rebates);
+
+function schemeValueLabel(scheme: (typeof state.schemes)[0]): string {
+  if (scheme.value.kind === 'perKwh') {
+    return `${formatAud(scheme.value.amount)} / ${scheme.value.unit}`;
+  }
+  if (scheme.value.amount === 0) {
+    return scheme.value.note?.split('.')[0] ?? 'Variable — confirm with installer';
+  }
+  return formatAud(scheme.value.amount);
+}
+
+function stateSupportEstimate(usableKwh: number): number {
+  return state.schemes.reduce((sum, scheme) => {
+    if (scheme.status === 'paused') return sum;
+    if (scheme.value.kind === 'perKwh') {
+      const raw = usableKwh * scheme.value.amount;
+      return sum + (scheme.cap != null ? Math.min(raw, scheme.cap) : raw);
+    }
+    return sum + scheme.value.amount;
+  }, 0);
+}
+
+const stateSupport = stateSupportEstimate(ref.usableKwh);
+const combined = federal.federalRebate + stateSupport;
+const netIllustrative = ref.typicalInstalledCost - combined;
+
+const schemeRows = state.schemes.map((s) => [
+  s.name,
+  schemeValueLabel(s),
+  s.cap != null ? formatAud(s.cap) : '—',
+  s.stacksWithFederal ? 'Yes' : 'No',
+  s.status,
+]);
+
+const stateNotes: Record<string, { stacking: string; local: string; tip: string }> = {
+  nsw: {
+    stacking:
+      'NSW support for batteries often arrives through the Peak Demand Reduction Scheme as certificates rather than a fixed cheque. The dollar outcome moves with certificate prices and the accredited provider on your job — treat our table’s “variable” row as a prompt to ask your installer for the current certificate value, not as a locked rebate.',
+    local:
+      'Time-of-use import tariffs and competitive feed-in offers both matter in NSW. A battery that covers the evening peak shoulder usually does more work than chasing a midday export credit. If you are already on a low flat FiT, self-consumption is the main lever.',
+    tip: 'Ask for the PDRS certificate estimate in writing beside the federal STC discount on the same quote.',
+  },
+  vic: {
+    stacking:
+      'Solar Victoria’s battery offer is means- and property-tested and delivered through approved retailers. The indicative package value in our data file is a planning figure — income streams and loan versus rebate pathways change the cash you actually see on install day.',
+    local:
+      'Victorian minimum feed-in arrangements and retailer extras sit beside Solar Victoria rules. Confirm you are using an approved retailer before you assume the state support applies; private quotes outside the program do not automatically qualify.',
+    tip: 'Check Solar Victoria’s current income and property caps before you compare east-coast “headline” rebates.',
+  },
+  qld: {
+    stacking:
+      'Queensland’s state battery support status changes more often than most. Our data file currently marks the state line as paused with a zero planning amount — meaning the federal discount is the reliable stacking partner until a live state program is confirmed against Queensland Energy sources.',
+    local:
+      'South East Queensland’s competitive retail market behaves differently from Ergon’s regional footprint. FiT ranges and demand charges vary; do not copy a Brisbane quote assumption onto a regional Ergon bill without checking the tariff.',
+    tip: 'If a salesperson quotes a large “QLD battery rebate” as fixed cash, ask which instrument and end date — then verify on the government site.',
+  },
+  sa: {
+    stacking:
+      'South Australia often delivers battery support through retailer and VPP participation under the Retailer Energy Productivity Scheme rather than a single statewide cheque. Amounts vary by retailer offer; our table flags that variability deliberately.',
+    local:
+      'High rooftop solar penetration means midday exports are frequently low-value. SA is one of the clearest “battery for evening self-consumption and VPP” markets — provided the VPP contract terms are readable on cycle limits and exit fees.',
+    tip: 'Read VPP dispatch rules before you count retailer incentives as guaranteed annual income.',
+  },
+};
+
+const copy = stateNotes[code!]!;
+
+const faq = [
+  {
+    question: `Does the federal rebate work the same in ${state.name}?`,
+    answer: `Yes. The Cheaper Home Batteries Program is national. ${state.name} schemes are additional. Install date still sets the federal STC factor and tiers.`,
+  },
+  {
+    question: 'Can I claim a state scheme and the federal discount together?',
+    answer: state.schemes.every((s) => s.stacksWithFederal)
+      ? `The ${state.name} scheme(s) we list are marked as stacking with the federal discount when you meet both eligibility sets. Your installer should show each line separately on the quote.`
+      : 'Check each scheme row in the table — stacking flags differ. Confirm with the scheme administrator if a row is unclear.',
+  },
+  {
+    question: 'Why is the state amount sometimes $0 in your table?',
+    answer:
+      'A zero planning amount means the support is certificate-based, paused, or retailer-variable — not that the federal rebate is zero. We refuse to invent a fake fixed dollar when the primary source does not publish one.',
+  },
+  {
+    question: 'What size should I use for comparisons?',
+    answer: `We use the same ${ref.usableKwh} kWh reference system on every state page so stacking maths is comparable. Your evening load may point to a smaller or larger pack — run the calculator with your usable kWh.`,
+  },
+  {
+    question: 'Where should I verify before I pay a deposit?',
+    answer: `Federal rules on the DCCEEW / Clean Energy Regulator pages, plus the ${state.name} source links in the table below. Our verified stamp is the date we last checked those sources — it is not a substitute for the live rule page.`,
+  },
+];
+
+const description = `${state.name} battery rebate stacking with the federal discount. Current federal tier-1 about $${perKwh.toFixed(0)} per usable kWh. ${ref.usableKwh} kWh worked example included.`;
+---
+
+<Article
+  title={`${state.name} battery rebate: what stacks with the federal discount`}
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Battery rebate', href: '/battery-rebate/' },
+    { label: state.name },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#federal">Federal recap</a></li>
+      <li><a href="#schemes">State schemes</a></li>
+      <li><a href="#stacking">Stacking example</a></li>
+      <li><a href="#local">Local context</a></li>
+      <li><a href="#eligibility">Eligibility</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    If you are comparing battery quotes in {state.name}, start with the national Cheaper Home Batteries
+    Program — currently about <Fig>{formatAud(perKwh)}</Fig> per usable kWh in the first tier (verified{' '}
+    {formatDateLong(rebates.meta.lastVerified)}) — then add whatever state or retailer instrument still
+    stacks. This page separates those layers so a “total discount” line on a sales sheet can be checked
+    against primary sources.
+  </p>
+
+  <h2 id="federal">Federal recap</h2>
+  <p>
+    Since <Fig>1 May 2026</Fig> the federal discount uses STC factor{' '}
+    <Fig>{rebates.current.stcFactor}</Fig> with tiers at <Fig>100%</Fig> / <Fig>60%</Fig> /{' '}
+    <Fig>15%</Fig> across usable bands to <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh. The installer
+    usually applies it at point of sale. See{' '}
+    <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> if an older flat-rate
+    quote does not match a new one.
+  </p>
+  <p>
+    For our shared <Fig>{ref.usableKwh}</Fig> kWh reference battery, the federal line is{' '}
+    <Fig>{formatAud(federal.federalRebate)}</Fig> at the assumed net STC price of{' '}
+    <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>.
+  </p>
+
+  <h2 id="schemes">{state.name} schemes</h2>
+  <DataTable
+    caption={`${state.name} battery-related schemes`}
+    headers={['Scheme', 'Value', 'Cap', 'Stacks federally', 'Status']}
+    rows={schemeRows}
+    numericCols={[2]}
+  />
+  {
+    state.schemes.map((s) =>
+      s.value.note ? (
+        <p>
+          <strong>{s.name}:</strong> {s.value.note}
+        </p>
+      ) : null,
+    )
+  }
+
+  <h2 id="stacking">Stacking worked example ({ref.usableKwh} kWh)</h2>
+  <p>{copy.stacking}</p>
+  <DataTable
+    caption={`${state.name} stacking illustration vs typical installed cost`}
+    headers={['Line', 'Amount']}
+    rows={[
+      ['Typical installed cost (reference)', formatAud(ref.typicalInstalledCost)],
+      ['Federal rebate', formatAud(federal.federalRebate)],
+      ['State / scheme planning amount', formatAud(stateSupport)],
+      ['Combined support', formatAud(combined)],
+      ['Illustrative net', formatAud(netIllustrative)],
+    ]}
+    numericCols={[1]}
+  />
+  <Callout type="note" title="Planning figures only">
+    <p>
+      {copy.tip} Net cost uses our reference typical installed price of{' '}
+      <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> — your site quote will differ.
+    </p>
+  </Callout>
+
+  <h2 id="local">Local context</h2>
+  <p>{copy.local}</p>
+  <p>
+    Compare other states:{' '}
+    <a href="/battery-rebate/wa/">WA</a>, <a href="/battery-rebate/nsw/">NSW</a>,{' '}
+    <a href="/battery-rebate/vic/">VIC</a>, <a href="/battery-rebate/qld/">QLD</a>,{' '}
+    <a href="/battery-rebate/sa/">SA</a>.
+  </p>
+
+  <h2 id="eligibility">Eligibility (read both lists)</h2>
+  <h3>Federal (applies everywhere)</h3>
+  <ul>
+    <li>CEC-approved battery product for the program</li>
+    <li>Accredited installer; program limits on systems per property</li>
+    <li>Capacity within the published eligible nominal range</li>
+    <li>VPP-capable requirements where the program mandates them for grid-connected systems</li>
+  </ul>
+  {
+    state.schemes.map((s) => (
+      <>
+        <h3>{s.name}</h3>
+        <ul>
+          {s.eligibility.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
+
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my federal rebate</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    </li>
+    {state.schemes.map((s) => (
+      <li>
+        <a href={s.sourceUrl}>{s.name}</a> — verified {formatDateLong(s.lastVerified)}
+      </li>
+    ))}
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

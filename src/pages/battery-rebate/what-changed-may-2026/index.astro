@@ -1,0 +1,237 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import TierBar from '../../../components/TierBar.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getRebates } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+  nextStepDown,
+} from '../../../lib/rebate';
+
+const rebates = getRebates();
+const perKwh = dollarsPerUsableKwh(rebates);
+const step = nextStepDown(rebates);
+const price = rebates.stcPrice.netAssumed;
+const preTier = rebates.history.find((h) => h.flat && h.effectiveFrom === '2026-01-01');
+const preFactor = preTier?.stcFactor ?? 8.4;
+
+const sizes = [10, 13.5, 30, 48];
+const beforeAfterRows = sizes.map((kwh) => {
+  const before = Math.floor(kwh * preFactor) * price;
+  const after = calculateFederalRebate(kwh, rebates, price);
+  const delta = after.federalRebate - before;
+  return [
+    `${kwh} kWh`,
+    formatAud(before),
+    formatAud(after.federalRebate),
+    formatAud(delta),
+    `${Math.round((delta / before) * 100)}%`,
+  ];
+});
+
+const faq = [
+  {
+    question: 'Did my quote change because of May 2026?',
+    answer:
+      'If your installation date is on or after 1 May 2026, the tiered STC factor of 6.8 applies. Quotes issued under the old flat-rate rules are only valid if the install date still falls in that earlier period — confirm the install date on the invoice, not the quote date.',
+  },
+  {
+    question: 'Why did larger batteries lose more rebate?',
+    answer:
+      'Under the flat rate, every usable kWh earned the same STC factor. The May 2026 tiers pay 100% of the factor for the first 14 kWh, 60% for the next 14 kWh, and 15% from 28–50 kWh. Oversized packs that were mainly chasing rebate dollars lost the most.',
+  },
+  {
+    question: 'Is the program ending?',
+    answer:
+      'No. The Cheaper Home Batteries Program runs to 2030, with legislated step-downs to the STC factor. The May 2026 change was a structural redesign (flat → tiers), not the end of the scheme.',
+  },
+  {
+    question: 'Can I still claim if I signed a contract before May?',
+    answer:
+      'Eligibility is tied to the installation date recorded in the Clean Energy Regulator process, not the contract signature date. Ask your installer which rate period your install will land in.',
+  },
+  {
+    question: 'Where do I check the current factor myself?',
+    answer:
+      'Primary source is the Department of Climate Change, Energy, the Environment and Water Cheaper Home Batteries Program page, plus Clean Energy Regulator guidance for STC creation. We mirror those figures in our data files and stamp every page with the date we last checked.',
+  },
+];
+
+const description = `On 1 May 2026 the federal battery rebate moved from a flat STC factor to three tiers. See before/after dollars at 10, 13.5, 30 and 48 kWh — currently about $${perKwh.toFixed(0)} per usable kWh in tier 1.`;
+---
+
+<Article
+  title="What changed in the battery rebate on 1 May 2026"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Battery rebate', href: '/battery-rebate/' },
+    { label: 'What changed May 2026' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#what-happened">What happened?</a></li>
+      <li><a href="#before-after">Before and after dollars</a></li>
+      <li><a href="#why">Why the change</a></li>
+      <li><a href="#by-size">What it means by size</a></li>
+      <li><a href="#schedule">Forward schedule</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    On <Fig>1 May 2026</Fig> Australia’s Cheaper Home Batteries Program stopped paying a single flat STC
+    factor on every usable kilowatt-hour and switched to a three-tier structure. The current tier-1 rate
+    works out to about <Fig>{formatAud(perKwh)}</Fig> per usable kWh at our assumed net STC price of{' '}
+    <Fig>{formatAud(price)}</Fig> (verified {formatDateLong(rebates.meta.lastVerified)}). If you are
+    comparing an old quote with a new one, the gap is almost always this redesign — not a typo.
+  </p>
+
+  <h2 id="what-happened">What happened on 1 May 2026?</h2>
+  <p>
+    From program launch on <Fig>1 Jul 2025</Fig> through <Fig>30 Apr 2026</Fig>, the federal discount was
+    a flat STC factor applied to eligible usable capacity. The factor itself stepped down once already —
+    from <Fig>9.3</Fig> (July 2025) to <Fig>8.4</Fig> (January 2026) — but the maths stayed simple:
+    usable kWh × factor × STC price.
+  </p>
+  <p>
+    From 1 May 2026 the factor is <Fig>{rebates.current.stcFactor}</Fig>, and that factor is only fully
+    applied to the first <Fig>14</Fig> kWh of usable capacity. Capacity from <Fig>14–28</Fig> kWh earns{' '}
+    <Fig>60%</Fig> of the factor. Capacity from <Fig>28–50</Fig> kWh earns <Fig>15%</Fig>. Nothing above{' '}
+    <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh of usable capacity is counted for the federal rebate.
+  </p>
+
+  <TierBar markerKwh={13.5} />
+
+  <Callout type="note" title="Install date sets the rate">
+    <p>
+      The rate that applies is the one in force on your installation date, not the day you signed the
+      quote. {step && (
+        <>
+          The next legislated reduction date on our schedule is{' '}
+          <Fig>{formatDateLong(step.date)}</Fig> (in <Fig>{step.days}</Fig> days from this build).
+        </>
+      )}
+    </p>
+  </Callout>
+
+  <h2 id="before-after">Before and after dollars</h2>
+  <p>
+    The table below uses the January–April 2026 flat factor of <Fig>{preFactor}</Fig> versus today’s
+    tiered <Fig>{rebates.current.stcFactor}</Fig>, both at the same net STC assumption of{' '}
+    <Fig>{formatAud(price)}</Fig>. Figures are floored to whole STCs the same way the calculator does.
+  </p>
+
+  <DataTable
+    caption="Federal rebate before vs after 1 May 2026 (same STC price assumption)"
+    headers={['Usable capacity', 'Before (flat 8.4)', 'After (tiers @ 6.8)', 'Change $', 'Change %']}
+    rows={beforeAfterRows}
+    numericCols={[1, 2, 3, 4]}
+  />
+
+  <p>
+    A household-sized <Fig>10</Fig> kWh pack lost a few hundred dollars. A <Fig>13.5</Fig> kWh
+    Powerwall-class unit lost more, but still sits mostly inside the full-rate band. A <Fig>30</Fig> or{' '}
+    <Fig>48</Fig> kWh system — the sizes that benefited most from the old flat maths — saw the steepest
+    cuts because so much of their capacity now sits in the 60% and 15% bands.
+  </p>
+
+  <h2 id="why">Why did the rules change?</h2>
+  <p>
+    Public commentary from government and industry through late 2025 and early 2026 pointed to three
+    linked problems. First, daily uptake rose far faster than the original budget assumed — from roughly
+    a couple of hundred installs a day toward well over a thousand once awareness and installer capacity
+    caught up. Second, the fiscal envelope for the program was revised upward (public figures moved from
+    about <Fig>$2.3</Fig> billion toward a <Fig>$7.2</Fig> billion order of magnitude as the scheme was
+    recalibrated). Third, the flat-rate design created an oversized-battery loophole: every extra usable
+    kWh paid the same, so some quotes chased capacity for rebate dollars rather than for household load.
+  </p>
+  <p>
+    Tiers keep a strong incentive on the first ~14 kWh — the band where most Australian homes actually
+    shift evening load — while sharply reducing the public subsidy on very large packs. That is a policy
+    choice, not a quirk of STC market pricing.
+  </p>
+
+  <h2 id="by-size">What it means at each size</h2>
+  <h3>Around 10 kWh</h3>
+  <p>
+    You are entirely inside the 100% band. The hit is almost entirely the factor drop from{' '}
+    <Fig>{preFactor}</Fig> to <Fig>{rebates.current.stcFactor}</Fig>, not the tiering. For many homes
+    this remains the simplest “evening shift” size if daytime solar already covers the day.
+  </p>
+  <h3>Around 13.5 kWh (Powerwall 3 class)</h3>
+  <p>
+    Still almost fully inside the top tier (the band ends at 14 kWh). Federal support after May is about{' '}
+    <Fig>{formatAud(calculateFederalRebate(13.5, rebates, price).federalRebate)}</Fig> at our STC
+    assumption — down from the flat-rate figure, but still material when stacked with a state scheme.
+  </p>
+  <h3>Around 30 kWh</h3>
+  <p>
+    You cross both step-downs. Roughly the first 14 kWh are paid in full, the next 14 at 60%, and a
+    couple of kWh at 15%. The federal cheque is still thousands of dollars, but it is no longer linear
+    with size. Size the battery to your evening load and any VPP rules — not to “max the rebate”.
+  </p>
+  <h3>Around 48 kWh and above</h3>
+  <p>
+    Most of the pack sits in the discounted bands, and capacity above{' '}
+    <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh usable earns nothing federally. Large systems can
+    still make sense for multi-occupancy, workshops, or high evening loads — just run the numbers without
+    assuming flat-rate dollars.
+  </p>
+
+  <h2 id="schedule">What happens next on the schedule?</h2>
+  <p>
+    From 2027 the program continues with announced step-down dates every January and July through 2030.
+    Exact future STC factors are filled in as the Clean Energy Regulator publishes them; until then our
+    schedule table marks those rows as announced dates without a locked factor. This page’s slug stays
+    evergreen — when the next factor lands, we update the data file, rebuild, and note the revision on{' '}
+    <a href="/what-changed/">What changed</a>.
+  </p>
+
+  <DataTable
+    caption="Forward step-down dates (factors filled as published)"
+    headers={['Effective from', 'STC factor', 'Status']}
+    rows={[
+      [
+        formatDateLong(rebates.current.effectiveFrom),
+        String(rebates.current.stcFactor),
+        'Current (tiered)',
+      ],
+      ...rebates.schedule.map((s) => [
+        formatDateLong(s.effectiveFrom),
+        s.stcFactor == null ? '—' : String(s.stcFactor),
+        s.status,
+      ]),
+    ]}
+    numericCols={[1]}
+  />
+
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my rebate at current rates</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> — {rebates.meta.administrator}
+    </li>
+    <li>
+      <a href="/battery-rebate/">Federal battery rebate hub</a> — current rates and eligibility
+    </li>
+    <li>
+      <a href="/what-changed/">Site changelog</a> — every data-file update we publish
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

@@ -1,0 +1,83 @@
+---
+import { SITE } from '../lib/site';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: SITE.url,
+    },
+    ...items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 2,
+      name: item.label,
+      ...(item.href ? { item: new URL(item.href, SITE.url).href } : {}),
+    })),
+  ],
+};
+---
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    {
+      items.map((item) => (
+        <li>
+          {item.href ? <a href={item.href}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+<script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />
+
+<style>
+  .crumbs {
+    margin-bottom: var(--s-4);
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+
+  li:not(:last-child)::after {
+    content: '/';
+    margin-left: var(--s-2);
+    color: var(--line);
+  }
+
+  a {
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--eucalypt);
+  }
+
+  [aria-current='page'] {
+    color: var(--ink);
+  }
+</style>

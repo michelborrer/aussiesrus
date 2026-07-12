@@ -1,0 +1,84 @@
+---
+import Article from '../../layouts/Article.astro';
+import { getChangelog, getRebates } from '../../lib/data';
+import { formatDateLong } from '../../lib/rebate';
+
+const rebates = getRebates();
+const entries = getChangelog().entries;
+
+const description =
+  'Changelog of verified rebate, FiT and cost data updates on Aussies R Us — every material change, dated, with affected pages.';
+---
+
+<Article
+  title="What changed"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'What changed' }]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      {entries.slice(0, 8).map((e) => (
+        <li>
+          <a href={`#e-${e.date}`}>{formatDateLong(e.date)}</a>
+        </li>
+      ))}
+    </ul>
+  </Fragment>
+
+  <p>
+    Every time we change a data file that drives rates, schemes, FiTs or reference costs, we record it
+    here. This page is the public audit trail behind the verified stamps you see on articles. Subscribe
+    via <a href="/rss.xml">RSS</a>.
+  </p>
+
+  <ol class="changelog">
+    {
+      entries.map((entry) => (
+        <li id={`e-${entry.date}`}>
+          <h2>
+            <time datetime={entry.date}>{formatDateLong(entry.date)}</time>
+          </h2>
+          <p>{entry.summary}</p>
+          {entry.affectedPages.length > 0 && (
+            <p class="affected">
+              Affected:{' '}
+              {entry.affectedPages.map((path, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <a href={path.endsWith('/') || path === '/' ? path : `${path}/`}>{path}</a>
+                </>
+              ))}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</Article>
+
+<style>
+  .changelog {
+    list-style: none;
+    padding: 0;
+    margin: var(--s-6) 0 0;
+  }
+
+  .changelog > li {
+    padding: var(--s-5) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .changelog h2 {
+    font-size: var(--t-h3);
+    font-family: var(--font-body);
+    font-weight: 600;
+    margin-bottom: var(--s-3);
+  }
+
+  .affected {
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+</style>

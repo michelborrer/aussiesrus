@@ -1,0 +1,155 @@
+{
+  "states": [
+    {
+      "name": "Western Australia",
+      "code": "wa",
+      "schemes": [
+        {
+          "name": "WA Residential Battery Scheme (Synergy)",
+          "type": "rebate",
+          "value": {
+            "kind": "perKwh",
+            "amount": 300,
+            "unit": "usable kWh",
+            "note": "Synergy customers in the SWIS. ⚠ VERIFY rate at launch."
+          },
+          "cap": 1500,
+          "eligibility": [
+            "Existing or simultaneous rooftop solar",
+            "Synergy residential customer on the SWIS",
+            "Battery on the CEC-approved list",
+            "Accredited installer"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.wa.gov.au/organisation/energy-policy-wa",
+          "lastVerified": "2026-07-12",
+          "status": "open"
+        },
+        {
+          "name": "WA Residential Battery Scheme (Horizon Power)",
+          "type": "rebate",
+          "value": {
+            "kind": "perKwh",
+            "amount": 500,
+            "unit": "usable kWh",
+            "note": "Horizon Power regional customers. Higher rate reflects network value. ⚠ VERIFY."
+          },
+          "cap": 2500,
+          "eligibility": [
+            "Horizon Power residential customer",
+            "Eligible remote/regional network location",
+            "Battery on the CEC-approved list"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.horizonpower.com.au/",
+          "lastVerified": "2026-07-12",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "name": "New South Wales",
+      "code": "nsw",
+      "schemes": [
+        {
+          "name": "NSW Peak Demand Reduction Scheme — battery incentives",
+          "type": "rebate",
+          "value": {
+            "kind": "fixed",
+            "amount": 0,
+            "unit": "AUD",
+            "note": "Certificate-based incentive varies by product and zone. Confirm current certificate price with installer. ⚠ VERIFY."
+          },
+          "cap": null,
+          "eligibility": [
+            "Eligible peak-demand reduction activity",
+            "Accredited certificate provider involvement",
+            "Residential premises in NSW"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.energy.nsw.gov.au/",
+          "lastVerified": "2026-07-12",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "name": "Victoria",
+      "code": "vic",
+      "schemes": [
+        {
+          "name": "Solar Victoria — Battery Rebate",
+          "type": "rebate",
+          "value": {
+            "kind": "fixed",
+            "amount": 2960,
+            "unit": "AUD",
+            "note": "Interest-free loan / rebate package value varies by income stream. Figure shown is indicative. ⚠ VERIFY."
+          },
+          "cap": 2960,
+          "eligibility": [
+            "Owner-occupier or landlord (stream-dependent)",
+            "Income and property value caps apply",
+            "Eligible battery product",
+            "Solar Victoria approved retailer"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.solar.vic.gov.au/",
+          "lastVerified": "2026-07-12",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "name": "Queensland",
+      "code": "qld",
+      "schemes": [
+        {
+          "name": "Queensland battery support (check current)",
+          "type": "rebate",
+          "value": {
+            "kind": "fixed",
+            "amount": 0,
+            "unit": "AUD",
+            "note": "State battery rebate availability changes frequently. Confirm against Queensland Energy website before quoting. ⚠ VERIFY."
+          },
+          "cap": null,
+          "eligibility": [
+            "Queensland residential premises",
+            "Program-specific eligibility when open"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.epw.qld.gov.au/",
+          "lastVerified": "2026-07-12",
+          "status": "paused"
+        }
+      ]
+    },
+    {
+      "name": "South Australia",
+      "code": "sa",
+      "schemes": [
+        {
+          "name": "SA Retailer Energy Productivity Scheme (REPS) — VPP incentive",
+          "type": "vpp",
+          "value": {
+            "kind": "fixed",
+            "amount": 0,
+            "unit": "AUD",
+            "note": "Often delivered as a retailer/VPP signup incentive rather than a fixed government cheque. Amounts vary by retailer. ⚠ VERIFY."
+          },
+          "cap": null,
+          "eligibility": [
+            "South Australian residential customer",
+            "VPP-capable battery and retailer participation",
+            "REPS activity eligibility"
+          ],
+          "stacksWithFederal": true,
+          "sourceUrl": "https://www.sa.gov.au/topics/energy-and-environment",
+          "lastVerified": "2026-07-12",
+          "status": "open"
+        }
+      ]
+    }
+  ]
+}

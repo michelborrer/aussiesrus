@@ -1,0 +1,143 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getRebates, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+} from '../../../lib/rebate';
+
+const rebates = getRebates();
+const systems = getSystems().systems;
+const sys = systems.find((s) => s.id === '13-5kwh')!;
+const fed = calculateFederalRebate(sys.usableKwh, rebates);
+const net = sys.typicalInstalledCost - fed.federalRebate;
+const perKwh = dollarsPerUsableKwh(rebates);
+
+const compareRows = systems.map((s) => {
+  const f = calculateFederalRebate(s.usableKwh, rebates);
+  const n = s.typicalInstalledCost - f.federalRebate;
+  return [
+    s.label,
+    formatAud(s.typicalInstalledCost),
+    formatAud(f.federalRebate),
+    formatAud(n),
+    formatAud(n / s.usableKwh),
+  ];
+});
+
+const faq = [
+  {
+    question: 'Is 13.5 kWh still in the full federal tier?',
+    answer:
+      'Yes. The top tier runs to 14 kWh usable, so a Powerwall-class 13.5 kWh pack is almost entirely at 100% of the current STC factor.',
+  },
+  {
+    question: 'Why is the typical cost higher than 10 kWh more than proportionally?',
+    answer:
+      'Integrated inverter-battery products, brand premiums, and labour minimums mean price is not a straight line with capacity. Compare net $/kWh in the table, not sticker price alone.',
+  },
+  {
+    question: 'Can I stack a state rebate?',
+    answer:
+      'Often yes — check your state page. WA Synergy customers, for example, hit a state cap that still adds a meaningful amount beside the federal line.',
+  },
+];
+
+const description = `13.5 kWh (Powerwall 3 class) battery cost after federal rebate. Typical installed ${formatAud(sys.typicalInstalledCost)}; federal support about ${formatAud(fed.federalRebate)} at current rates.`;
+---
+
+<Article
+  title="13.5 kWh battery cost after the federal rebate"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Costs', href: '/costs/13-5kwh-battery-cost/' },
+    { label: '13.5 kWh battery' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#price">Typical price</a></li>
+      <li><a href="#rebate">Rebate and net</a></li>
+      <li><a href="#compare">Compare sizes</a></li>
+      <li><a href="#drivers">What moves quotes</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    The <Fig>13.5</Fig> kWh class — Tesla Powerwall 3 territory and peers — is our mid reference system.
+    It sits just inside the federal full-rate band that ends at <Fig>14</Fig> kWh usable, which is why it
+    shows up so often in post–May 2026 quotes. Tier-1 support is about <Fig>{formatAud(perKwh)}</Fig> per
+    usable kWh (verified {formatDateLong(rebates.meta.lastVerified)}).
+  </p>
+
+  <h2 id="price">Typical installed price</h2>
+  <p>
+    Planning figure: <Fig>{formatAud(sys.typicalInstalledCost)}</Fig> installed before rebates for a
+    standard single-phase residential job. Prestige brands, backup gateways, and difficult sites push
+    above that band.
+  </p>
+
+  <h2 id="rebate">Federal rebate and net cost</h2>
+  <DataTable
+    headers={['Line', 'Amount']}
+    rows={[
+      ['Typical installed (reference)', formatAud(sys.typicalInstalledCost)],
+      ['Federal rebate', formatAud(fed.federalRebate)],
+      ['Illustrative net', formatAud(net)],
+      ['Net per usable kWh', formatAud(net / sys.usableKwh)],
+    ]}
+    numericCols={[1]}
+  />
+  <p>
+    At <Fig>{fed.stcCount}</Fig> STCs, federal support is <Fig>{formatAud(fed.federalRebate)}</Fig>, for
+    an illustrative net of <Fig>{formatAud(net)}</Fig>. See the{' '}
+    <a href="/battery-rebate/wa/">WA stacking example</a> for the same size with state money included.
+  </p>
+
+  <h2 id="compare">Price per kWh versus other sizes</h2>
+  <DataTable
+    caption="Reference systems after federal rebate only"
+    headers={['System', 'Typical installed', 'Federal rebate', 'Net', 'Net $/usable kWh']}
+    rows={compareRows}
+    numericCols={[1, 2, 3, 4]}
+  />
+
+  <h2 id="drivers">What drives quotes up or down</h2>
+  <ul>
+    <li>Whether the battery includes a hybrid inverter or pairs with an existing one</li>
+    <li>Backup / whole-home versus essential-loads panels</li>
+    <li>Three-phase supply and CT placement</li>
+    <li>Travel and scaffold on steep metro roofs</li>
+    <li>Promotional bundles with new panels (check STC lines separately)</li>
+  </ul>
+  <Callout type="note" title="No installer picks in v1">
+    <p>We publish cost bands and rebate maths — not a recommended installer list.</p>
+  </Callout>
+
+  <p>
+    <CtaButton href="/guides/is-a-battery-worth-it/">See payback assumptions</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    </li>
+    <li>
+      <a href="/costs/10kwh-battery-cost/">10 kWh cost page</a>
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

@@ -1,0 +1,129 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getRebates } from '../../../lib/data';
+import { formatAud, formatDateLong } from '../../../lib/rebate';
+
+const rebates = getRebates();
+const typicalInstalled = 6500;
+const panelKw = 6.6;
+const zoneRating = 1.382;
+const deemingYears = 2030 - 2026;
+const stcPrice = rebates.stcPrice.netAssumed;
+const panelStcs = Math.floor(panelKw * zoneRating * deemingYears);
+const panelRebate = panelStcs * stcPrice;
+const net = typicalInstalled - panelRebate;
+
+const faq = [
+  {
+    question: 'Is 6.6 kW still a sensible default?',
+    answer:
+      'It remains a common single-phase sweet spot, but many homes now quote 8–10 kW if the switchboard and export limits allow. Match array size to daytime load and roof — not to a 2018 rule of thumb.',
+  },
+  {
+    question: 'Does this include a battery?',
+    answer:
+      'No. This page is panels-only. For combined packages see the Perth solar + battery page; battery support uses the separate Cheaper Home Batteries Program.',
+  },
+  {
+    question: 'Why is my STC discount different?',
+    answer:
+      'Zone rating, exact deeming factor, and certificate price on the day all move. Our example is illustrative using the same net STC assumption as our battery maths.',
+  },
+];
+
+const description = `Typical 6.6 kW rooftop solar cost in Australia after STC discount. Planning installed about ${formatAud(typicalInstalled)}; worked STC example included.`;
+---
+
+<Article
+  title="6.6 kW solar system cost (after STCs)"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Costs', href: '/costs/6-6kw-solar-system-cost/' },
+    { label: '6.6 kW solar' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#price">Typical price</a></li>
+      <li><a href="#stc">STC discount</a></li>
+      <li><a href="#drivers">What moves quotes</a></li>
+      <li><a href="#battery">Adding a battery</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    A <Fig>{panelKw}</Fig> kW rooftop system is still the yardstick many Australian quotes use. Panel and
+    inverter prices have fallen for years, while the STC deeming period keeps shrinking toward{' '}
+    <Fig>2030</Fig> — so net cost is a race between hardware deflation and fewer certificates. Verified
+    data stamp on related rebate files: {formatDateLong(rebates.meta.lastVerified)}.
+  </p>
+
+  <h2 id="price">Typical installed price</h2>
+  <p>
+    Our planning mid-point for a straightforward <Fig>{panelKw}</Fig> kW install is about{' '}
+    <Fig>{formatAud(typicalInstalled)}</Fig> before STCs. Tier-one hardware, tile roofs, and long DC runs
+    sit higher; bare promotional “from” prices sit lower and often exclude extras.
+  </p>
+
+  <h2 id="stc">Illustrative STC discount</h2>
+  <DataTable
+    caption="Zone-3 style example — replace with CER figures on your quote"
+    headers={['Line', 'Value']}
+    rows={[
+      ['Typical installed', formatAud(typicalInstalled)],
+      ['STCs (floored)', String(panelStcs)],
+      ['Assumed net $/STC', formatAud(stcPrice)],
+      ['Illustrative STC discount', formatAud(panelRebate)],
+      ['Illustrative net', formatAud(net)],
+    ]}
+    numericCols={[1]}
+  />
+  <p>
+    More detail on zones and deeming: <a href="/solar-rebate/">solar panel rebate (STCs)</a>.
+  </p>
+
+  <h2 id="drivers">What drives quotes up or down</h2>
+  <ul>
+    <li>Panel tier and inverter brand / hybrid readiness</li>
+    <li>Roof type, storeys, and split arrays</li>
+    <li>Export limits and meter upgrades</li>
+    <li>Council or strata constraints</li>
+    <li>Whether an electrician must upgrade the main switchboard</li>
+  </ul>
+  <Callout type="note" title="No installer picks in v1">
+    <p>We publish cost bands and rebate maths — not a recommended installer list.</p>
+  </Callout>
+
+  <h2 id="battery">Adding a battery later or together</h2>
+  <p>
+    Hybrid inverters cost more upfront but simplify a later battery. If you are buying both now, demand
+    separate STC (panels) and Cheaper Home Batteries (battery) lines. Start with{' '}
+    <a href="/costs/13-5kwh-battery-cost/">13.5 kWh battery cost</a> or the{' '}
+    <a href="/costs/solar-battery-package-perth/">Perth package page</a>.
+  </p>
+
+  <p>
+    <CtaButton href="/solar-rebate/">Read the STC guide</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href="https://www.cleanenergyregulator.gov.au/">Clean Energy Regulator</a>
+    </li>
+    <li>
+      <a href="/feed-in-tariffs/">Feed-in tariffs</a>
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

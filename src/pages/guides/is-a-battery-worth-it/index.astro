@@ -1,0 +1,252 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getFits, getRebates, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+} from '../../../lib/rebate';
+
+const rebates = getRebates();
+const systems = getSystems().systems;
+const fits = getFits();
+const perKwh = dollarsPerUsableKwh(rebates);
+
+const retailImport = 0.35; // $/kWh planning assumption — stated openly
+const cyclesPerYear = 300;
+
+const rows = systems.map((sys) => {
+  const fed = calculateFederalRebate(sys.usableKwh, rebates);
+  const net = sys.typicalInstalledCost - fed.federalRebate;
+  const annualShiftKwh = sys.usableKwh * 0.7 * cyclesPerYear; // 70% depth used on cycle days
+  const annualSaving = annualShiftKwh * (retailImport - 0.05); // 5c opportunity FiT foregone
+  const simplePayback = annualSaving > 0 ? net / annualSaving : Infinity;
+  return {
+    sys,
+    fed,
+    net,
+    annualSaving,
+    simplePayback,
+  };
+});
+
+const paybackTable = rows.map((r) => [
+  r.sys.label,
+  formatAud(r.sys.typicalInstalledCost),
+  formatAud(r.fed.federalRebate),
+  formatAud(r.net),
+  formatAud(r.annualSaving),
+  Number.isFinite(r.simplePayback) ? `${r.simplePayback.toFixed(1)} yrs` : '—',
+]);
+
+const faq = [
+  {
+    question: 'What payback period is “good”?',
+    answer:
+      'There is no universal number. Many households treat under 8–10 years as acceptable if the battery also covers blackouts or VPP income. Others need faster cash payback. We show simple payback under stated assumptions so you can substitute your tariff.',
+  },
+  {
+    question: 'Do rebates change the answer?',
+    answer:
+      'Yes — federal (and any stacking state) support lowers the net capital cost, which shortens simple payback. Use current rates and your install date; stale flat-rate quotes will mislead after 1 May 2026.',
+  },
+  {
+    question: 'Should I buy a battery before more panels?',
+    answer:
+      'If you still export a lot at low FiT and import in the evening, a battery can beat adding panels. If your roof is undersized for daytime load, panels-first usually wins. We say so explicitly in the “when it is not worth it” section.',
+  },
+  {
+    question: 'Are VPPs required to make the numbers work?',
+    answer:
+      'No. VPPs can improve returns but add contract complexity. Model self-consumption first; treat VPP income as upside only after you read dispatch and warranty interactions.',
+  },
+  {
+    question: 'How often do you refresh the cost assumptions?',
+    answer:
+      'Reference system costs live in systems.json and are verified on the same cadence as rebate data. The verified stamp on this page tracks the rebate file; check the cost pages for the latest typical installed bands.',
+  },
+];
+
+const description = `Honest battery payback maths for 10, 13.5 and 30 kWh systems after the federal rebate (about $${perKwh.toFixed(0)}/kWh tier 1). Includes when a battery is not worth it yet.`;
+---
+
+<Article
+  title="Is a home battery worth it in Australia?"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Guides', href: '/guides/is-a-battery-worth-it/' },
+    { label: 'Is a battery worth it?' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#short-answer">Short answer</a></li>
+      <li><a href="#variables">What actually moves payback</a></li>
+      <li><a href="#maths">Simple payback maths</a></li>
+      <li><a href="#three-systems">Three reference systems</a></li>
+      <li><a href="#not-yet">When it is not worth it</a></li>
+      <li><a href="#how-to-decide">How to decide</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    A home battery is worth it when the money you stop paying for evening grid imports (plus any reliable
+    VPP income) recovers the net cost after rebates in a timeframe you accept — and when the alternative
+    uses of that cash, especially more panels, are weaker. Under current Cheaper Home Batteries rates,
+    tier-1 support is about <Fig>{formatAud(perKwh)}</Fig> per usable kWh (verified{' '}
+    {formatDateLong(rebates.meta.lastVerified)}). That improves the maths; it does not make every quote
+    a good buy.
+  </p>
+
+  <h2 id="short-answer">Short answer</h2>
+  <p>
+    If you already have solar, export at a low feed-in tariff, and use meaningful power after sunset,
+    a right-sized battery is often rational once federal (and any state) support is applied. If your
+    evenings are light, your tariff is flat and cheap, or you still have unused north roof for panels,
+    waiting or choosing panels-first is the independent answer — even though we write about batteries
+    every day.
+  </p>
+
+  <h2 id="variables">What actually moves payback</h2>
+  <ol>
+    <li>
+      <strong>Usage timing.</strong> Batteries earn by replacing imports, not by existing. Evening and
+      early-morning load matters; midday load is already cheap if you have solar.
+    </li>
+    <li>
+      <strong>Import tariff.</strong> Higher peak/cents-per-kWh retail rates increase the value of each
+      shifted kilowatt-hour.
+    </li>
+    <li>
+      <strong>Feed-in tariff.</strong> Low FiTs raise the opportunity cost of exporting instead of
+      storing. See our <a href="/feed-in-tariffs/">FiT table</a>.
+    </li>
+    <li>
+      <strong>Rebate stack.</strong> Federal tiers since May 2026 plus any state scheme change net
+      capital cost. Use the <a href="/battery-rebate/calculator/">rebate calculator</a>.
+    </li>
+    <li>
+      <strong>VPP / demand response.</strong> Optional upside with contract risk — model last, not first.
+    </li>
+  </ol>
+
+  <h2 id="maths">Simple payback maths (stated assumptions)</h2>
+  <p>
+    We use a deliberately plain model so you can argue with it. Assumptions for the table below:
+  </p>
+  <ul>
+    <li>Retail import rate <Fig>{(retailImport * 100).toFixed(0)}</Fig> c/kWh (flat planning rate)</li>
+    <li>Foregone export value <Fig>5</Fig> c/kWh when you store instead of export</li>
+    <li>
+      <Fig>{cyclesPerYear}</Fig> equivalent full cycles per year at <Fig>70%</Fig> of usable capacity
+      actually shifted
+    </li>
+    <li>Federal rebate only (no state stack) at current data-file rates</li>
+    <li>No battery degradation, no VPP, no blackout value, no finance interest</li>
+  </ul>
+  <Callout type="note" title="This is not a quote">
+    <p>
+      Substitute your TOU rates, real evening kWh, and installer price. Simple payback ignores discount
+      rates and warranty limits — it is a comparison tool, not financial advice.
+    </p>
+  </Callout>
+
+  <h2 id="three-systems">Three reference systems</h2>
+  <DataTable
+    caption={`Simple payback after federal rebate only (${formatDateLong(rebates.meta.lastVerified)} rates)`}
+    headers={[
+      'System',
+      'Typical installed',
+      'Federal rebate',
+      'Net cost',
+      'Illustrative annual saving',
+      'Simple payback',
+    ]}
+    rows={paybackTable}
+    numericCols={[1, 2, 3, 4, 5]}
+  />
+  <p>
+    Reading the table honestly: the <Fig>10</Fig> kWh and <Fig>13.5</Fig> kWh packs sit mostly in the
+    federal full-rate band and usually show clearer simple payback under these assumptions. The{' '}
+    <Fig>30</Fig> kWh system receives more rebate dollars in absolute terms but much of its capacity is
+    in discounted tiers — you need the load (or a clear VPP case) to justify the extra capital.
+  </p>
+  <p>
+    Cost deep-dives:{' '}
+    <a href="/costs/10kwh-battery-cost/">10 kWh</a>,{' '}
+    <a href="/costs/13-5kwh-battery-cost/">13.5 kWh</a>,{' '}
+    <a href="/costs/solar-battery-package-perth/">Perth solar + battery packages</a>.
+  </p>
+
+  <h2 id="not-yet">When a battery is not worth it (yet)</h2>
+  <ul>
+    <li>
+      <strong>Low evening usage.</strong> Empty-nesters who are out until late, or homes that already
+      shift load with timers, may not cycle the pack enough.
+    </li>
+    <li>
+      <strong>Panels-first gap.</strong> If daytime imports are still high and roof space remains, STCs
+      on extra panels often beat a battery on pure $/kWh displaced. See{' '}
+      <a href="/solar-rebate/">solar (panels) rebate</a>.
+    </li>
+    <li>
+      <strong>Tight cash and high interest.</strong> Financing a battery at a rate above your effective
+      energy saving turns a medium payback into a poor one.
+    </li>
+    <li>
+      <strong>Oversizing for rebate optics.</strong> After May 2026, chasing 40+ kWh for federal dollars
+      is usually the wrong optimisation.
+    </li>
+    <li>
+      <strong>Unreadable VPP contracts.</strong> If the only way the spreadsheet works is optimistic VPP
+      income you cannot verify, walk away or remodel without it.
+    </li>
+  </ul>
+
+  <h2 id="how-to-decide">How to decide in one afternoon</h2>
+  <ol>
+    <li>Pull 12 months of import/export if you can (retailer app or meter data).</li>
+    <li>Note your evening peak kWh on a typical weekday.</li>
+    <li>
+      Size usable capacity near that evening block — not “as big as the rebate brochure”.
+    </li>
+    <li>
+      Run <a href="/battery-rebate/calculator/">current federal rebate</a> and your state’s{' '}
+      <a href="/battery-rebate/wa/">stacking page</a>.
+    </li>
+    <li>Collect two to three installer quotes with the same usable kWh and product shortlist.</li>
+    <li>Re-run simple payback with your tariff. If it only works with heroic assumptions, wait.</li>
+  </ol>
+
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my rebate</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources and related</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    </li>
+    <li>
+      <a href="/battery-rebate/">Federal battery rebate hub</a>
+    </li>
+    <li>
+      <a href="/feed-in-tariffs/">Feed-in tariffs by state</a>
+    </li>
+    <li>
+      FiT snapshot coverage: {fits.states.map((s) => s.code.toUpperCase()).join(', ')}
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

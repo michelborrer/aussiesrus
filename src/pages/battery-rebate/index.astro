@@ -1,0 +1,276 @@
+---
+import Article from '../../layouts/Article.astro';
+import RateBoard from '../../components/RateBoard.astro';
+import TierBar from '../../components/TierBar.astro';
+import DataTable from '../../components/DataTable.astro';
+import Callout from '../../components/Callout.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Fig from '../../components/Fig.astro';
+import CtaButton from '../../components/CtaButton.astro';
+import { getRebates, getSystems } from '../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+  nextStepDown,
+} from '../../lib/rebate';
+
+const rebates = getRebates();
+const systems = getSystems().systems;
+const perKwh = dollarsPerUsableKwh(rebates);
+const next = nextStepDown(rebates);
+const verified = rebates.meta.lastVerified;
+
+const examples = systems.map((s) => {
+  const r = calculateFederalRebate(s.usableKwh, rebates);
+  return [s.label, `${s.usableKwh} kWh`, String(r.stcCount), formatAud(r.federalRebate)];
+});
+
+const tierRows = rebates.current.tiers.map((t) => [
+  `${t.fromKwh}–${t.toKwh} kWh`,
+  `${t.factorPct}%`,
+  (rebates.current.stcFactor * (t.factorPct / 100)).toFixed(2),
+]);
+
+const scheduleRows = [
+  ...rebates.history.map((h) => [
+    formatDateLong(h.effectiveFrom),
+    String(h.stcFactor),
+    h.flat ? 'Flat rate' : 'Tiered',
+    'Historical',
+  ]),
+  ...rebates.schedule.map((s) => [
+    formatDateLong(s.effectiveFrom),
+    s.stcFactor != null ? String(s.stcFactor) : 'TBA',
+    'Step-down',
+    s.status,
+  ]),
+];
+
+const faqs = [
+  {
+    question: 'Does the install date or the order date set my rebate rate?',
+    answer:
+      'Your installation date determines which STC factor and tier rules apply. Ordering before a step-down does not lock the old rate if the system is installed after the change takes effect.',
+  },
+  {
+    question: 'Can I claim the federal battery rebate twice on the same property?',
+    answer:
+      'Generally no — the program is designed around one eligible system per premises. Confirm edge cases (replacements, expansions) with the Clean Energy Regulator and your installer.',
+  },
+  {
+    question: 'Does the rebate cover the inverter?',
+    answer:
+      'The Cheaper Home Batteries Program discounts eligible battery capacity via STCs. Hybrid inverter costs are part of the installed quote but are not separately rebated under this battery program.',
+  },
+  {
+    question: 'Do I need a virtual power plant (VPP) to get the rebate?',
+    answer:
+      'Grid-connected systems generally need to be VPP-capable (able to participate), but you are not always required to enrol in a VPP to receive the federal discount. Check the current CER eligibility rules for your install date.',
+  },
+  {
+    question: 'Is the rebate paid to me or taken off the invoice?',
+    answer:
+      'Most households see it as a point-of-sale discount applied by the installer, who then creates and sells the STCs. A self-claim path via the REC Registry exists but is less common for households.',
+  },
+  {
+    question: 'What STC price should I assume?',
+    answer: `The clearing-house headline is about $${rebates.stcPrice.headline}, but households typically net closer to $${rebates.stcPrice.netAssumed} after admin costs. Our calculator defaults to $${rebates.stcPrice.netAssumed}.`,
+  },
+  {
+    question: 'Can I stack a state rebate with the federal discount?',
+    answer:
+      'Often yes — WA, NSW, VIC and SA schemes commonly stack, subject to each program’s rules. We list stacking status on each state page; always confirm with the state source and your installer.',
+  },
+  {
+    question: 'Where do these figures come from?',
+    answer:
+      'Federal rates are taken from the Cheaper Home Batteries Program materials administered via the Clean Energy Regulator. Every data page carries a verified date and links to /what-changed/.',
+  },
+];
+
+const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per usable kWh (STC factor ${rebates.current.stcFactor}). Tier rules since 1 May 2026 explained.`;
+---
+
+<Article
+  title="Federal battery rebate: current rates and how it works"
+  description={description}
+  crumbs={[{ label: 'Battery rebate' }]}
+  updated="2026-07-12"
+  verified={verified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#current-value">Current value</a></li>
+      <li><a href="#how-applied">How it’s applied</a></li>
+      <li><a href="#tiers">Tier structure</a></li>
+      <li><a href="#schedule">Step-down schedule</a></li>
+      <li><a href="#eligibility">Eligibility</a></li>
+      <li><a href="#examples">Worked examples</a></li>
+      <li><a href="#state-stacking">State stacking</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    The federal <strong>Cheaper Home Batteries Program</strong> currently discounts home batteries by
+    about <Fig>${perKwh.toFixed(0)}</Fig> per usable kilowatt-hour at our assumed STC net price of
+    <Fig>${rebates.stcPrice.netAssumed}</Fig> (STC factor <Fig>{rebates.current.stcFactor}</Fig>,
+    effective <Fig>{formatDateLong(rebates.current.effectiveFrom)}</Fig>). That figure is what most
+    comparison articles get wrong after each legislated step-down — so we keep it in one data file and
+    stamp every page with the date we last checked the Clean Energy Regulator sources.
+  </p>
+
+  <p>
+    Prefer numbers over narrative? Jump to the
+    <a href="/battery-rebate/calculator/">battery rebate calculator</a> — same maths, live inputs.
+  </p>
+
+  <h2 id="current-value">What is the battery rebate worth right now?</h2>
+  <p>
+    Under the current rules, STCs are created from your battery’s <em>usable</em> capacity, multiplied
+    by the STC factor, then adjusted by the tier percentage for each band of kilowatt-hours. The dollar
+    result is STC count × STC price. Using a net STC price of <Fig>${rebates.stcPrice.netAssumed}</Fig>
+    (headline clearing-house price is about <Fig>${rebates.stcPrice.headline}</Fig>), the effective
+    headline rate for capacity inside the first tier is roughly <Fig>${perKwh.toFixed(0)}</Fig> per
+    usable kWh.
+  </p>
+
+  <div class="embed-board">
+    <RateBoard variant="hero" />
+  </div>
+
+  {
+    next && (
+      <Callout type="warning" title="Rates follow your installation date">
+        <p>
+          Rates are set by your installation date. The next legislated reduction takes effect{' '}
+          <Fig>{formatDateLong(next.date)}</Fig> (in <Fig>{next.days}</Fig> days). Ordering early does
+          not lock today’s factor if install slips past the step-down.
+        </p>
+      </Callout>
+    )
+  }
+
+  <h2 id="how-applied">How is the discount applied?</h2>
+  <p>
+    In practice, accredited installers usually apply the federal benefit as a point-of-sale discount on
+    your quote. They create the Small-scale Technology Certificates in the REC Registry and sell them
+    into the STC market. You can self-create certificates in some cases, but most households never see
+    that paperwork — they see a lower invoice.
+  </p>
+  <p>
+    The program is administered through the <strong>{rebates.meta.administrator}</strong>. Primary
+    program information sits with the Department of Climate Change, Energy, the Environment and Water
+    — we link sources at the bottom of this page and on <a href="/what-changed/">what changed</a>.
+  </p>
+
+  <h2 id="tiers">Tier structure since 1 May 2026</h2>
+  <p>
+    From 1 May 2026 the flat STC factor was replaced with three capacity bands. Capacity in the first
+    <Fig>14</Fig> usable kWh attracts <Fig>100%</Fig> of the factor; the next <Fig>14</Fig> kWh
+    attracts <Fig>60%</Fig>; capacity from <Fig>28</Fig> to <Fig>50</Fig> kWh attracts
+    <Fig>15%</Fig>. Nothing above <Fig>50</Fig> usable kWh earns federal STCs under this program.
+  </p>
+
+  <TierBar />
+
+  <DataTable
+    caption="Current federal battery STC tiers"
+    headers={['Usable capacity band', 'Share of STC factor', 'Effective factor']}
+    rows={tierRows}
+    numericCols={[1, 2]}
+  />
+
+  <p>
+    That change hit larger batteries hardest — which is exactly why we published a dedicated
+    <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> explainer with
+    before/after dollars at common sizes.
+  </p>
+
+  <h2 id="schedule">Step-down schedule</h2>
+  <p>
+    The STC factor declines on a legislated timetable through to program end in
+    <Fig>{rebates.meta.programEnd}</Fig>. From 2027 the schedule steps every January and July. Exact
+    future factors are filled in here as the Clean Energy Regulator publishes them — rows marked TBA
+    are announced dates without a confirmed factor yet.
+  </p>
+
+  <DataTable
+    caption="Federal battery STC factor history and announced step-downs"
+    headers={['Effective from', 'STC factor', 'Structure', 'Status']}
+    rows={scheduleRows}
+    numericCols={[1]}
+  />
+
+  <h2 id="eligibility">Eligibility checklist</h2>
+  <ul>
+    <li>Battery on the CEC-approved product list for the program period</li>
+    <li>Usable capacity generally within about <Fig>5–100</Fig> kWh nominal range; discount capped at <Fig>50</Fig> usable kWh</li>
+    <li>Grid-connected systems typically must be VPP-capable</li>
+    <li>Installed by an accredited installer</li>
+    <li>Usually one eligible system per property — confirm edge cases with the regulator</li>
+  </ul>
+
+  <Callout type="note" title="General information only">
+    <p>
+      Eligibility and dollar outcomes depend on your install date, product, and installer process.
+      Confirm against the Clean Energy Regulator and your quote — this page is not financial advice.
+    </p>
+  </Callout>
+
+  <h2 id="examples">Worked examples at current rates</h2>
+  <p>
+    We use the same three reference systems across the site so numbers stay comparable: a
+    <Fig>10</Fig> kWh battery, a <Fig>13.5</Fig> kWh (Powerwall 3–class) battery, and a
+    <Fig>30</Fig> kWh large system. Rebates below assume STC net price
+    <Fig>${rebates.stcPrice.netAssumed}</Fig>.
+  </p>
+
+  <DataTable
+    caption="Federal rebate examples (current tiers)"
+    headers={['System', 'Usable capacity', 'STCs', 'Est. rebate']}
+    rows={examples}
+    numericCols={[2, 3]}
+  />
+
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my rebate</CtaButton>
+  </p>
+
+  <h2 id="state-stacking">State stacking</h2>
+  <p>
+    Several states layer their own battery support on top of the federal discount. Stacking is
+    common but never automatic — income caps, retailer rules, and VPP enrolment can all apply. Start
+    with your state page:
+  </p>
+  <ul>
+    <li><a href="/battery-rebate/wa/">Western Australia</a> — Synergy vs Horizon depth</li>
+    <li><a href="/battery-rebate/nsw/">New South Wales</a></li>
+    <li><a href="/battery-rebate/vic/">Victoria</a></li>
+    <li><a href="/battery-rebate/qld/">Queensland</a></li>
+    <li><a href="/battery-rebate/sa/">South Australia</a></li>
+  </ul>
+
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>
+        <a href={rebates.meta.sourceUrl} rel="noopener">{rebates.meta.program}</a> — DCCEEW
+      </li>
+      <li>
+        <a href="https://www.cleanenergyregulator.gov.au/" rel="noopener">Clean Energy Regulator</a>
+      </li>
+      <li><a href="/what-changed/">Aussies R Us data changelog</a></li>
+    </ul>
+  </div>
+
+  <FaqBlock items={faqs} />
+</Article>
+
+<style>
+  .embed-board {
+    margin: var(--s-5) 0 var(--s-6);
+    max-width: 28rem;
+  }
+</style>

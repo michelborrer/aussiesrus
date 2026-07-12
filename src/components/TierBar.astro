@@ -1,0 +1,136 @@
+---
+import { getRebates } from '../lib/data';
+
+interface Props {
+  markerKwh?: number;
+}
+
+const { markerKwh } = Astro.props;
+const rebates = getRebates();
+const cap = rebates.current.usableCapCapKwh;
+const tiers = rebates.current.tiers;
+
+function pct(kwh: number) {
+  return (kwh / cap) * 100;
+}
+
+const markerPct = markerKwh != null ? Math.min(100, Math.max(0, pct(markerKwh))) : null;
+---
+
+<div class="tier-bar" role="img" aria-label={`Rebate tier bands from 0 to ${cap} kWh`}>
+  <div class="bar">
+    {
+      tiers.map((tier, i) => {
+        const width = pct(tier.toKwh) - pct(tier.fromKwh);
+        const opacity = [1, 0.6, 0.15][i] ?? 0.15;
+        return (
+          <div
+            class="band"
+            style={`width:${width}%; background: color-mix(in srgb, var(--sun) ${opacity * 100}%, transparent);`}
+            title={`${tier.fromKwh}–${tier.toKwh} kWh @ ${tier.factorPct}%`}
+          />
+        );
+      })
+    }
+    {
+      markerPct != null && (
+        <div class="marker" style={`left:${markerPct}%`} title={`${markerKwh} kWh`}>
+          <span class="marker-dot" />
+        </div>
+      )
+    }
+  </div>
+  <div class="ticks">
+    <span class="fig">0</span>
+    <span class="fig" style={`left:${pct(14)}%`}>14</span>
+    <span class="fig" style={`left:${pct(28)}%`}>28</span>
+    <span class="fig" style={`left:100%`}>50 kWh</span>
+  </div>
+  <ul class="legend">
+    {
+      tiers.map((tier) => (
+        <li>
+          <span class="fig">
+            {tier.fromKwh}–{tier.toKwh} kWh
+          </span>
+          : {tier.factorPct}% of STC factor
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .tier-bar {
+    margin: var(--s-5) 0;
+  }
+
+  .bar {
+    position: relative;
+    display: flex;
+    height: 28px;
+    border-radius: var(--r-s);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--paper-dim);
+  }
+
+  .band {
+    height: 100%;
+  }
+
+  .marker {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--ink);
+    transform: translateX(-50%);
+  }
+
+  .marker-dot {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translateX(-50%);
+  }
+
+  .ticks {
+    position: relative;
+    height: 1.4em;
+    margin-top: var(--s-2);
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+
+  .ticks .fig {
+    position: absolute;
+    transform: translateX(-50%);
+  }
+
+  .ticks .fig:first-child {
+    left: 0;
+    transform: none;
+  }
+
+  .ticks .fig:last-child {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+
+  .legend {
+    list-style: none;
+    margin: var(--s-4) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3) var(--s-5);
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+</style>

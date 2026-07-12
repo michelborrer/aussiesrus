@@ -1,0 +1,7 @@
+---
+# Cloudflare Pages redirects
+# www → apex handled at Cloudflare; keep path-level redirects here.
+# Owner to supply Ahrefs top-20 map (§11). Placeholder examples only.
+
+/home / 301
+/index.html / 301

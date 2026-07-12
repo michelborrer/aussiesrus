@@ -1,0 +1,120 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Callout from '../../../components/Callout.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { SITE } from '../../../lib/site';
+
+const faq = [
+  {
+    question: 'Does Origin ownership mean SolarQuotes gives bad advice?',
+    answer:
+      'No. Ownership is a fact consumers may weigh; it is not evidence of poor technical advice. Installers on a marketplace can still be competent. We do not claim otherwise.',
+  },
+  {
+    question: 'Is Aussies R Us owned by an energy retailer?',
+    answer: `No. ${SITE.name} is operated by ${SITE.operator}. We disclose how we make money on the About page. We are not a retailer-owned comparison marketplace.`,
+  },
+  {
+    question: 'What about CHOICE and SolarQuotes?',
+    answer:
+      'CHOICE has had a commercial partnership relationship with SolarQuotes. That is separate from Origin’s ownership. Partnership and ownership are different facts; both are relevant to how you read endorsements.',
+  },
+];
+
+const description =
+  'Who owns SolarQuotes and Solar Choice? Origin Energy acquired SolarQuotes in December 2024; Flow Power acquired Solar Choice in 2025. Factual ownership rundown for Australian solar buyers.';
+---
+
+<Article
+  title="Who owns SolarQuotes? (and Solar Choice)"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Compare', href: '/compare/who-owns-solarquotes/' },
+    { label: 'Who owns SolarQuotes?' },
+  ]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#solarquotes">SolarQuotes and Origin</a></li>
+      <li><a href="#solar-choice">Solar Choice and Flow Power</a></li>
+      <li><a href="#choice">CHOICE partnership</a></li>
+      <li><a href="#means">What ownership means</a></li>
+      <li><a href="#us">Our independence</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    Two of Australia’s best-known solar comparison brands are no longer independent of the energy retail
+    sector. <strong>SolarQuotes was acquired by Origin Energy in December 2024.</strong>{' '}
+    <strong>Solar Choice was acquired by Flow Power in 2025.</strong> Those are corporate ownership facts.
+    They do not automatically mean a quote you receive is worse — but they are facts worth knowing before
+    you treat a comparison site as a neutral referee.
+  </p>
+
+  <h2 id="solarquotes">SolarQuotes — Origin Energy (December 2024)</h2>
+  <p>
+    Origin Energy, one of Australia’s largest energy retailers, acquired SolarQuotes in December 2024.
+    SolarQuotes had operated for years as a consumer-facing solar (and later battery) quote marketplace
+    and content publisher. After the acquisition, the brand continued publicly; the ownership parent
+    changed.
+  </p>
+  <p>
+    Origin sells electricity and related products to households. A retailer-owned lead channel has a
+    structural interest in how customers buy energy hardware and which retail plans they land on. That
+    interest can be managed with firewalls and disclosures — it does not disappear.
+  </p>
+
+  <h2 id="solar-choice">Solar Choice — Flow Power (2025)</h2>
+  <p>
+    Solar Choice, another long-running Australian solar comparison and quoting business, was acquired by
+    Flow Power in 2025. Flow Power is an electricity retailer and energy-services business. As with
+    SolarQuotes/Origin, the consumer brand and the corporate owner are now linked.
+  </p>
+
+  <h2 id="choice">CHOICE and SolarQuotes</h2>
+  <p>
+    CHOICE, the consumer advocacy organisation, has had a commercial partnership with SolarQuotes. A
+    partnership is not the same thing as ownership: CHOICE did not buy SolarQuotes, and Origin’s 2024
+    acquisition is a separate event. Readers should still notice when an advocacy brand and a commercial
+    quote marketplace promote each other — incentives differ from a purely editorial review.
+  </p>
+
+  <Callout type="note" title="How we handle conquest topics">
+    <p>
+      We state dated ownership and partnership facts. We do not claim competitors give bad advice, and we
+      do not invent motives. If a date or transaction detail is updated in public records, we correct this
+      page and note it on <a href="/what-changed/">What changed</a>.
+    </p>
+  </Callout>
+
+  <h2 id="means">What ownership means — and does not mean — for you</h2>
+  <p>
+    <strong>It means</strong> the comparison brand sits inside a corporate group that also sells energy
+    or energy services. Marketing, lead routing, and plan upsells may align with that group’s commercial
+    goals. Reading the privacy policy and consent text on any quote form is worthwhile everywhere —
+    including on retailer-owned sites.
+  </p>
+  <p>
+    <strong>It does not mean</strong> every installer in a marketplace is “owned” by the retailer, or that
+    hardware recommendations are automatically wrong. Competent electricians work through many channels.
+    Ownership is one input to trust, not a verdict on a single quote.
+  </p>
+
+  <h2 id="us">Where Aussies R Us sits</h2>
+  <p>
+    {SITE.name} is an independent information site operated by {SITE.operator}. We are not owned by an
+    energy retailer. Phase 1 revenue is display advertising and disclosed affiliate links. A quote
+    referral service may come later; if it does, we will say so plainly on the About page and on the form
+    itself. We do not sell placement inside editorial rankings.
+  </p>
+  <p>
+    For a side-by-side of quote channels — including SolarQuotes rated fairly — see{' '}
+    <a href="/compare/solarquotes-alternatives/">SolarQuotes alternatives</a>. For how we verify rebate
+    figures, see <a href="/about/">About</a>.
+  </p>
+
+  <FaqBlock items={faq} />
+</Article>

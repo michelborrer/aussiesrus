@@ -1,0 +1,153 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getFits, getRebates, getState, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  formatAud,
+  formatDateLong,
+} from '../../../lib/rebate';
+
+const rebates = getRebates();
+const wa = getState('wa')!;
+const fits = getFits().states.find((s) => s.code === 'wa')!;
+const bat = getSystems().systems.find((s) => s.id === '13-5kwh')!;
+const solarTypical = 6500;
+const packageTypical = solarTypical + bat.typicalInstalledCost;
+const federalBat = calculateFederalRebate(bat.usableKwh, rebates);
+const synergy = wa.schemes.find((s) => s.name.includes('Synergy'))!;
+const synergyAmt = Math.min(bat.usableKwh * synergy.value.amount, synergy.cap!);
+/** Illustrative panel STCs — same approach as solar-rebate page */
+const panelStcs = Math.floor(6.6 * 1.382 * (2030 - 2026));
+const panelDisc = panelStcs * rebates.stcPrice.netAssumed;
+const totalSupport = federalBat.federalRebate + synergyAmt + panelDisc;
+const netPackage = packageTypical - totalSupport;
+
+const faq = [
+  {
+    question: 'Is this only for Synergy customers?',
+    answer:
+      'The worked stack uses Synergy’s WA scheme cap. Horizon Power customers should swap in the higher per-kWh rate and cap from the WA rebate page.',
+  },
+  {
+    question: 'Can I claim panel STCs and the battery rebate together?',
+    answer:
+      'Yes when each technology meets its own rules. They are separate instruments — keep them as separate lines on the quote.',
+  },
+  {
+    question: 'How does DEBS change the package case?',
+    answer:
+      'Low midday export credits under DEBS make self-consumption more valuable. The battery’s job is evening import displacement, not maximising export credits.',
+  },
+];
+
+const description = `Solar + battery package costs in Perth with WA stacking. Example 6.6 kW + ${bat.usableKwh} kWh after federal, Synergy and panel STC support.`;
+---
+
+<Article
+  title="Solar + battery package cost in Perth"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Costs', href: '/costs/solar-battery-package-perth/' },
+    { label: 'Perth solar + battery' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#package">Example package</a></li>
+      <li><a href="#stack">WA stacking</a></li>
+      <li><a href="#debs">DEBS / SWIS notes</a></li>
+      <li><a href="#drivers">Quote drivers</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    Perth buyers usually face a combined decision: panels, battery, or both on the SWIS under Synergy
+    (or Horizon outside the grid). This page walks a concrete package — about <Fig>6.6</Fig> kW of
+    rooftop solar plus a <Fig>{bat.usableKwh}</Fig> kWh battery — through federal battery support, WA
+    state support, and panel STCs, using figures verified{' '}
+    {formatDateLong(rebates.meta.lastVerified)}.
+  </p>
+
+  <h2 id="package">Example package (planning figures)</h2>
+  <DataTable
+    headers={['Component', 'Typical installed']}
+    rows={[
+      ['6.6 kW solar (planning)', formatAud(solarTypical)],
+      [`${bat.usableKwh} kWh battery (reference)`, formatAud(bat.typicalInstalledCost)],
+      ['Combined before support', formatAud(packageTypical)],
+    ]}
+    numericCols={[1]}
+  />
+
+  <h2 id="stack">Support stack (Synergy customer)</h2>
+  <DataTable
+    caption="Illustrative — confirm live scheme pages before signing"
+    headers={['Support line', 'Amount']}
+    rows={[
+      ['Panel STCs (illustrative)', formatAud(panelDisc)],
+      ['Federal battery rebate', formatAud(federalBat.federalRebate)],
+      ['WA Synergy scheme (capped)', formatAud(synergyAmt)],
+      ['Combined support', formatAud(totalSupport)],
+      ['Illustrative net package', formatAud(netPackage)],
+    ]}
+    numericCols={[1]}
+  />
+  <p>
+    Full WA rules and Horizon variant:{' '}
+    <a href="/battery-rebate/wa/">WA battery rebate</a>. Federal-only calculator:{' '}
+    <a href="/battery-rebate/calculator/">rebate calculator</a>.
+  </p>
+
+  <h2 id="debs">DEBS and SWIS context</h2>
+  <p>
+    Synergy’s DEBS export payments currently sit in about <Fig>{fits.minCPerKwh}</Fig>–
+    <Fig>{fits.maxCPerKwh}</Fig> c/kWh across time bands in our snapshot (verified{' '}
+    {formatDateLong(fits.lastVerified)}). Midday exports are weak relative to evening import rates, which
+    is why a correctly sized battery shows up in Perth payback chats even when “solar alone” still looks
+    fine for daytime load.
+  </p>
+  <Callout type="warning" title="Export limits">
+    <p>
+      Western Power export limits and inverter settings can cap how much you send to the grid. That
+      constraint strengthens self-consumption design — discuss it explicitly on the quote, not as a
+      footnote.
+    </p>
+  </Callout>
+
+  <h2 id="drivers">What moves Perth package quotes</h2>
+  <ul>
+    <li>Tile versus metal roofs; two-storey access</li>
+    <li>Single-phase versus three-phase and battery gateway choices</li>
+    <li>Whether the battery is installed with new panels or retrofitted later</li>
+    <li>Freight and installer utilisation in WA</li>
+    <li>VPP offers that change cashflow but add contract terms</li>
+  </ul>
+
+  <p>
+    <CtaButton href="/battery-rebate/wa/">See WA rebate stacking</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    </li>
+    <li>
+      <a href={synergy.sourceUrl}>{synergy.name}</a>
+    </li>
+    <li>
+      <a href={fits.sourceUrl}>Synergy / DEBS</a>
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

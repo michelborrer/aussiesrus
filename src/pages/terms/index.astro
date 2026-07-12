@@ -1,0 +1,67 @@
+---
+import Article from '../../layouts/Article.astro';
+import { SITE } from '../../lib/site';
+
+const description = `Terms of use for ${SITE.name} — information only, not financial advice, and limits on liability.`;
+---
+
+<Article
+  title="Terms of use"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Terms' }]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+>
+  <p>Last updated: 12 July 2026. Operator: {SITE.operator} ({SITE.abn}).</p>
+
+  <h2>Agreement</h2>
+  <p>
+    By using {SITE.url} you agree to these terms. If you do not agree, do not use the site.
+  </p>
+
+  <h2>Information only</h2>
+  <p>
+    Content is general information about Australian solar and battery topics. It is not personal financial,
+    legal, or technical advice. Rebate amounts depend on installation date, eligibility, certificate
+    prices, and scheme rules. Confirm figures with the Clean Energy Regulator, relevant state agencies,
+    and your licensed installer before you buy.
+  </p>
+
+  <h2>No guarantee of outcomes</h2>
+  <p>
+    We aim for accuracy and stamp verification dates on data-driven pages, but scheme rules and market
+    prices change. We do not warrant that any payback example will match your household.
+  </p>
+
+  <h2>Third-party links and ads</h2>
+  <p>
+    Links to government sites, retailers, and other businesses are for convenience. Affiliate links may
+    earn us a commission (disclosed). Ad partners operate under their own terms.
+  </p>
+
+  <h2>Acceptable use</h2>
+  <p>
+    Do not misuse forms, attempt to disrupt the service, scrape the site in a way that degrades service, or
+    submit unlawful content. We may block abusive traffic.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    Site design, original text, and branding are owned by {SITE.operator} unless otherwise noted. You may
+    quote short excerpts with attribution and a link for non-commercial commentary.
+  </p>
+
+  <h2>Liability</h2>
+  <p>
+    To the extent permitted by Australian Consumer Law, we exclude liability for consequential loss arising
+    from use of the site. Nothing in these terms excludes non-excludable consumer guarantees.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>These terms are governed by the laws of Western Australia and the Commonwealth of Australia.</p>
+
+  <h2>Contact</h2>
+  <p>
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a> · <a href="/contact/">Contact form</a>
+  </p>
+</Article>

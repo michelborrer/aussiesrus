@@ -1,0 +1,22 @@
+{
+  "systems": [
+    {
+      "id": "10kwh",
+      "label": "10 kWh battery",
+      "usableKwh": 10,
+      "typicalInstalledCost": 9000
+    },
+    {
+      "id": "13-5kwh",
+      "label": "13.5 kWh battery (Powerwall 3 class)",
+      "usableKwh": 13.5,
+      "typicalInstalledCost": 14000
+    },
+    {
+      "id": "30kwh",
+      "label": "30 kWh large system",
+      "usableKwh": 30,
+      "typicalInstalledCost": 28000
+    }
+  ]
+}

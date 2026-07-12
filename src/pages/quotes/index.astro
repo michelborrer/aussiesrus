@@ -1,0 +1,32 @@
+---
+import Article from '../../layouts/Article.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import Callout from '../../components/Callout.astro';
+
+const description =
+  'Request battery and solar quotes via Aussies R Us. Your details may be shared with up to three quoting partners.';
+---
+
+<Article
+  title="Get battery quotes"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Quotes' }]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+  noindex={true}
+>
+  <p>
+    Tell us how to reach you and we will pass your request to quoting partners who can discuss products
+    and install pricing for your postcode. This page is not listed in the main navigation while we run
+    Phase 1 as an information site — it is ready for Phase 2.
+  </p>
+  <Callout type="note" title="What you are consenting to">
+    <p>
+      By submitting, you agree to be contacted by Aussies R Us and up to three installers or quoting
+      partners about this request. Read the <a href="/privacy/">privacy policy</a> for how lead details
+      are handled.
+    </p>
+  </Callout>
+
+  <QuoteForm type="lead" />
+</Article>

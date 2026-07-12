@@ -1,0 +1,168 @@
+---
+import { FORM_CONSENT } from '../lib/site';
+
+interface Props {
+  type?: 'lead' | 'contact';
+}
+
+const { type = 'lead' } = Astro.props;
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+---
+
+<form class="quote-form" method="POST" action="/api/lead" novalidate>
+  <input type="hidden" name="type" value={type} />
+  <div class="hp" aria-hidden="true">
+    <label>
+      Company
+      <input type="text" name="company" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <div class="field">
+    <label for="name">Full name</label>
+    <input id="name" name="name" type="text" required autocomplete="name" />
+  </div>
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required autocomplete="email" />
+  </div>
+
+  {
+    type === 'lead' && (
+      <>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            autocomplete="tel"
+            inputmode="tel"
+            pattern="^(\+?61|0)[2-478](?:[ -]?[0-9]){8}$"
+            aria-describedby="phone-hint"
+          />
+          <p id="phone-hint" class="hint">Australian mobile or landline</p>
+        </div>
+        <div class="field">
+          <label for="postcode">Postcode</label>
+          <input
+            id="postcode"
+            name="postcode"
+            type="text"
+            required
+            inputmode="numeric"
+            pattern="^[0-9]{4}$"
+            maxlength="4"
+          />
+        </div>
+        <div class="field check">
+          <label>
+            <input type="checkbox" name="consent" value="true" required />
+            <span>{FORM_CONSENT}</span>
+          </label>
+        </div>
+      </>
+    )
+  }
+
+  {
+    type === 'contact' && (
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required />
+      </div>
+    )
+  }
+
+  {
+    siteKey ? (
+      <div class="cf-turnstile" data-sitekey={siteKey} />
+    ) : (
+      <p class="hint">Turnstile site key not configured — form will fail verification in production.</p>
+    )
+  }
+
+  <button class="submit" type="submit">{type === 'lead' ? 'Request quotes' : 'Send message'}</button>
+</form>
+
+{siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />}
+
+<style>
+  .quote-form {
+    display: grid;
+    gap: var(--s-4);
+    max-width: 36rem;
+  }
+
+  .field {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  label {
+    font-weight: 600;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  textarea {
+    min-height: 44px;
+    padding: var(--s-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-s);
+    background: var(--paper);
+    font: inherit;
+    color: var(--ink);
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .hint {
+    margin: 0;
+    font-size: var(--t-meta);
+    color: var(--ink-soft);
+  }
+
+  .check label {
+    display: flex;
+    gap: var(--s-3);
+    font-weight: 400;
+    align-items: flex-start;
+  }
+
+  .check input {
+    margin-top: 0.35em;
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .submit {
+    min-height: 44px;
+    padding: 0 var(--s-5);
+    border: none;
+    border-radius: var(--r-s);
+    background: var(--sun);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    justify-self: start;
+  }
+
+  .submit:hover {
+    filter: brightness(0.92);
+  }
+</style>

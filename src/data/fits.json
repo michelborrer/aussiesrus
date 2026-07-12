@@ -1,0 +1,84 @@
+{
+  "states": [
+    {
+      "code": "wa",
+      "name": "Western Australia",
+      "minCPerKwh": 2.5,
+      "maxCPerKwh": 10,
+      "referenceRetailers": ["Synergy (DEBS)", "Horizon Power"],
+      "note": "DEBS rates vary by export time bands. Evening exports often pay more than midday.",
+      "sourceUrl": "https://www.synergy.net.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "nsw",
+      "name": "New South Wales",
+      "minCPerKwh": 4,
+      "maxCPerKwh": 12,
+      "referenceRetailers": ["Origin", "EnergyAustralia", "AGL"],
+      "note": "Competitive FiTs vary widely; time-of-use export plans are common.",
+      "sourceUrl": "https://www.energymadeeasy.gov.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "vic",
+      "name": "Victoria",
+      "minCPerKwh": 3.3,
+      "maxCPerKwh": 10,
+      "referenceRetailers": ["Origin", "AGL", "Red Energy"],
+      "note": "Minimum FiT obligations and retailer offers both apply — compare plans.",
+      "sourceUrl": "https://www.energymadeeasy.gov.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "qld",
+      "name": "Queensland",
+      "minCPerKwh": 4,
+      "maxCPerKwh": 14,
+      "referenceRetailers": ["Ergon", "Origin", "Alinta"],
+      "note": "SEQ competitive market vs Ergon regional regulated offers.",
+      "sourceUrl": "https://www.energymadeeasy.gov.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "sa",
+      "name": "South Australia",
+      "minCPerKwh": 4,
+      "maxCPerKwh": 12,
+      "referenceRetailers": ["AGL", "Origin", "Simply Energy"],
+      "note": "High solar penetration — midday FiTs are often low; batteries capture evening value.",
+      "sourceUrl": "https://www.energymadeeasy.gov.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "tas",
+      "name": "Tasmania",
+      "minCPerKwh": 8,
+      "maxCPerKwh": 11,
+      "referenceRetailers": ["Aurora Energy"],
+      "note": "Predominantly Aurora offers.",
+      "sourceUrl": "https://www.auroraenergy.com.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "act",
+      "name": "Australian Capital Territory",
+      "minCPerKwh": 6,
+      "maxCPerKwh": 12,
+      "referenceRetailers": ["ActewAGL", "Origin"],
+      "note": "Small market; compare Energy Made Easy listings.",
+      "sourceUrl": "https://www.energymadeeasy.gov.au/",
+      "lastVerified": "2026-07-12"
+    },
+    {
+      "code": "nt",
+      "name": "Northern Territory",
+      "minCPerKwh": 8,
+      "maxCPerKwh": 12,
+      "referenceRetailers": ["Jacana Energy"],
+      "note": "Limited retailer choice outside Alice Springs/Darwin variations.",
+      "sourceUrl": "https://jacanaenergy.com.au/",
+      "lastVerified": "2026-07-12"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+}
+
+const { href, title, description } = Astro.props;
+---
+
+<a class="pathway" href={href}>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <span class="arrow" aria-hidden="true">→</span>
+</a>
+
+<style>
+  .pathway {
+    display: block;
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+    text-decoration: none;
+    color: var(--ink);
+    position: relative;
+    min-height: 100%;
+  }
+
+  .pathway:hover {
+    border-color: var(--eucalypt);
+  }
+
+  .pathway h3 {
+    margin-bottom: var(--s-2);
+  }
+
+  .pathway p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: var(--t-meta);
+    padding-right: var(--s-5);
+  }
+
+  .arrow {
+    position: absolute;
+    right: var(--s-5);
+    bottom: var(--s-5);
+    color: var(--eucalypt);
+    font-size: 1.25rem;
+  }
+</style>

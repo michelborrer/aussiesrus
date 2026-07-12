@@ -1,0 +1,107 @@
+---
+import { FOOTER_DISCLOSURE, SITE } from '../lib/site';
+import { formatDateLong } from '../lib/rebate';
+
+interface Props {
+  lastVerified: string;
+}
+
+const { lastVerified } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-brand">Aussies R Us</p>
+        <p class="footer-disclosure">{FOOTER_DISCLOSURE}</p>
+        <p class="footer-meta">
+          Operated by {SITE.operator} · {SITE.abn} ·
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="/battery-rebate/">Battery rebate</a></li>
+          <li><a href="/battery-rebate/calculator/">Calculator</a></li>
+          <li><a href="/guides/is-a-battery-worth-it/">Is a battery worth it?</a></li>
+          <li><a href="/what-changed/">What changed</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+          <li><a href="/editorial-policy/">Editorial policy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-verify">
+      Figures verified against the Clean Energy Regulator — last update {formatDateLong(lastVerified)}.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--panel);
+    color: var(--paper);
+    padding: var(--s-8) 0 var(--s-6);
+    margin-top: var(--s-9);
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: semi-expanded;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--s-4);
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .footer-disclosure,
+  .footer-meta,
+  .footer-verify {
+    color: color-mix(in srgb, var(--paper) 78%, transparent);
+    font-size: var(--t-meta);
+    line-height: 1.55;
+  }
+
+  .footer-meta a,
+  .footer-links a {
+    color: var(--paper);
+  }
+
+  .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+    columns: 2;
+  }
+
+  .footer-links a {
+    text-decoration: none;
+    font-size: var(--t-meta);
+  }
+
+  .footer-links a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-verify {
+    margin-top: var(--s-6);
+    padding-top: var(--s-4);
+    border-top: 1px solid color-mix(in srgb, var(--paper) 18%, transparent);
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+</style>

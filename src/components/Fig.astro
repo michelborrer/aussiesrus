@@ -1,0 +1,11 @@
+---
+interface Props {
+  delta?: 'up' | 'down';
+}
+
+const { delta } = Astro.props;
+---
+
+<span class:list={['fig', { 'fig--up': delta === 'up', 'fig--down': delta === 'down' }]}
+  ><slot /></span
+>

@@ -1,0 +1,34 @@
+---
+import Article from '../../../layouts/Article.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+
+const description = 'Thanks — we have received your quote request.';
+---
+
+<Article
+  title="Thanks — request received"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Quotes', href: '/quotes/' },
+    { label: 'Thanks' },
+  ]}
+  updated="2026-07-12"
+  showMiniBoard={false}
+  noindex={true}
+>
+  <p>
+    Thanks. Your details are in. Quoting partners may contact you by phone, SMS or email about your
+    request. If anything looks wrong, email us via the <a href="/contact/">contact page</a>.
+  </p>
+  <p>
+    While you wait, you can check current federal support with the calculator or read the honest payback
+    guide.
+  </p>
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my rebate</CtaButton>
+  </p>
+  <p>
+    <CtaButton href="/guides/is-a-battery-worth-it/" variant="secondary">Is a battery worth it?</CtaButton>
+  </p>
+</Article>

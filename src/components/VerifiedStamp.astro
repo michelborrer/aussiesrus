@@ -1,0 +1,40 @@
+---
+import { formatDateStamp } from '../lib/rebate';
+
+interface Props {
+  date: string;
+  dark?: boolean;
+}
+
+const { date, dark = false } = Astro.props;
+---
+
+<a class:list={['stamp', { 'stamp--dark': dark }]} href="/what-changed/">
+  <span class="fig">Verified {formatDateStamp(date)}</span>
+</a>
+
+<style>
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 2px 8px;
+    background: var(--sun);
+    color: var(--ink);
+    border-radius: var(--r-s);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .stamp:hover {
+    filter: brightness(0.95);
+  }
+
+  .stamp--dark {
+    background: var(--sun);
+    color: var(--ink);
+  }
+</style>

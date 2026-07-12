@@ -1,0 +1,260 @@
+---
+import Article from '../../../layouts/Article.astro';
+import Fig from '../../../components/Fig.astro';
+import Callout from '../../../components/Callout.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import CtaButton from '../../../components/CtaButton.astro';
+import { getFits, getRebates, getState, getSystems } from '../../../lib/data';
+import {
+  calculateFederalRebate,
+  dollarsPerUsableKwh,
+  formatAud,
+  formatDateLong,
+} from '../../../lib/rebate';
+
+const rebates = getRebates();
+const wa = getState('wa')!;
+const systems = getSystems();
+const fits = getFits().states.find((s) => s.code === 'wa')!;
+const perKwh = dollarsPerUsableKwh(rebates);
+const ref = systems.systems.find((s) => s.id === '13-5kwh')!;
+const federal = calculateFederalRebate(ref.usableKwh, rebates);
+
+const synergy = wa.schemes.find((s) => s.name.includes('Synergy'))!;
+const horizon = wa.schemes.find((s) => s.name.includes('Horizon'))!;
+
+function stateAmount(
+  scheme: (typeof wa.schemes)[0],
+  usableKwh: number,
+): number {
+  if (scheme.value.kind === 'perKwh') {
+    const raw = usableKwh * scheme.value.amount;
+    return scheme.cap != null ? Math.min(raw, scheme.cap) : raw;
+  }
+  return scheme.value.amount;
+}
+
+const synergyAmt = stateAmount(synergy, ref.usableKwh);
+const horizonAmt = stateAmount(horizon, ref.usableKwh);
+const synergyTotal = federal.federalRebate + synergyAmt;
+const horizonTotal = federal.federalRebate + horizonAmt;
+const synergyNet = ref.typicalInstalledCost - synergyTotal;
+const horizonNet = ref.typicalInstalledCost - horizonTotal;
+
+const schemeRows = wa.schemes.map((s) => [
+  s.name,
+  s.value.kind === 'perKwh'
+    ? `${formatAud(s.value.amount)} / ${s.value.unit}`
+    : formatAud(s.value.amount),
+  s.cap != null ? formatAud(s.cap) : '—',
+  s.stacksWithFederal ? 'Yes' : 'No',
+  s.status,
+]);
+
+const faq = [
+  {
+    question: 'Do I get both the federal and WA rebates?',
+    answer:
+      'Yes when you meet both sets of rules. The federal Cheaper Home Batteries discount is usually applied by your installer at point of sale. The WA Residential Battery Scheme is a separate state payment with its own Synergy or Horizon pathway — stacking is allowed on both streams we list.',
+  },
+  {
+    question: 'Am I on Synergy or Horizon Power?',
+    answer:
+      'Most of the Perth and South West Interconnected System (SWIS) is Synergy. Horizon Power covers regional and remote networks. Check a recent bill — the retailer name determines which WA per-kWh rate and cap apply.',
+  },
+  {
+    question: 'What is DEBS and how does it affect battery maths?',
+    answer:
+      'The Distributed Energy Buyback Scheme sets Synergy’s export payments by time band. Midday exports often pay little; evening bands pay more. A battery that shifts your own evening load usually beats exporting cheap midday kWh — that is the core WA payback story, not a guaranteed FiT.',
+  },
+  {
+    question: 'Do I need existing solar?',
+    answer:
+      'WA scheme eligibility listed here requires existing or simultaneous rooftop solar for the Synergy stream, plus a CEC-approved battery and an accredited installer. Confirm the live checklist on the WA Government / Energy Policy WA pages before you sign.',
+  },
+  {
+    question: 'Are Perth install prices the same as the east coast?',
+    answer:
+      'Not always. Freight, installer utilisation, and product mix move Perth quotes. Use our typical installed costs as a planning band, then collect local quotes — the rebate maths still starts from usable kWh and your retailer.',
+  },
+];
+
+const description = `WA battery rebates that stack with the federal discount. Synergy vs Horizon rates, DEBS context, and a ${ref.usableKwh} kWh stacking example. Federal tier 1 about $${perKwh.toFixed(0)}/kWh.`;
+---
+
+<Article
+  title="WA battery rebate: what stacks with the federal discount"
+  description={description}
+  crumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Battery rebate', href: '/battery-rebate/' },
+    { label: 'Western Australia' },
+  ]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#federal">Federal discount first</a></li>
+      <li><a href="#schemes">WA schemes</a></li>
+      <li><a href="#synergy-horizon">Synergy vs Horizon</a></li>
+      <li><a href="#debs">DEBS and feed-in</a></li>
+      <li><a href="#stacking">13.5 kWh stacking example</a></li>
+      <li><a href="#perth-costs">Perth install costs</a></li>
+      <li><a href="#eligibility">Eligibility</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    Western Australia is where federal and state battery support actually meet on a typical household
+    quote. The Cheaper Home Batteries Program currently pays about <Fig>{formatAud(perKwh)}</Fig> per
+    usable kWh in the first tier (verified {formatDateLong(rebates.meta.lastVerified)}). On top of that,
+    the WA Residential Battery Scheme pays a separate per-kWh amount that differs for Synergy customers
+    on the SWIS and Horizon Power customers in regional networks — both streams stack with the federal
+    discount when eligibility holds.
+  </p>
+
+  <h2 id="federal">Federal discount first</h2>
+  <p>
+    Every eligible WA home starts with the same national rules: CEC-approved battery, accredited
+    installer, usable capacity in the program’s nominal range, and — for grid-connected systems —
+    VPP-capable hardware where required. Since <Fig>1 May 2026</Fig> the federal payment uses three
+    tiers ending at <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh usable. Install date sets the rate.
+  </p>
+  <p>
+    For our reference <Fig>{ref.usableKwh}</Fig> kWh system, the federal rebate at current assumptions is{' '}
+    <Fig>{formatAud(federal.federalRebate)}</Fig> (
+    <Fig>{federal.stcCount}</Fig> STCs × <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>). That
+    figure is the floor of the stacking maths below — state money sits on top, it does not replace it.
+  </p>
+
+  <h2 id="schemes">WA schemes at a glance</h2>
+  <DataTable
+    caption={`WA battery schemes (verified ${formatDateLong(synergy.lastVerified)})`}
+    headers={['Scheme', 'Value', 'Cap', 'Stacks federally', 'Status']}
+    rows={schemeRows}
+    numericCols={[1, 2]}
+  />
+  <p>
+    Synergy’s listed rate is <Fig>{formatAud(synergy.value.amount)}</Fig> per usable kWh capped at{' '}
+    <Fig>{formatAud(synergy.cap!)}</Fig>. Horizon’s listed rate is{' '}
+    <Fig>{formatAud(horizon.value.amount)}</Fig> per usable kWh capped at{' '}
+    <Fig>{formatAud(horizon.cap!)}</Fig>. Higher Horizon support reflects greater network value in
+    regional and remote systems — it is not a Perth metro rate.
+  </p>
+
+  <h2 id="synergy-horizon">Synergy vs Horizon: which bucket are you in?</h2>
+  <p>
+    If you live in greater Perth, Mandurah, or most of the south-west grid, you are almost certainly a
+    Synergy customer on the SWIS. Horizon Power is the vertically integrated utility for many towns and
+    remote networks outside that grid. The WA scheme splits because the network benefit of a residential
+    battery is different in each footprint.
+  </p>
+  <p>
+    Practically: pull a recent electricity bill. If it says Synergy, use the Synergy row and the{' '}
+    <Fig>{formatAud(synergy.cap!)}</Fig> cap. If it says Horizon Power, use the Horizon row. Do not
+    average the two — installers will not.
+  </p>
+
+  <Callout type="warning" title="Rates marked verify">
+    <p>
+      Seed values in our data file carry a verify flag until launch sign-off against Energy Policy WA /
+      Horizon primary pages. Always confirm the live per-kWh figure and cap on the government source
+      linked below before you treat a quote as final.
+    </p>
+  </Callout>
+
+  <h2 id="debs">DEBS feed-in context</h2>
+  <p>
+    Synergy’s Distributed Energy Buyback Scheme (DEBS) pays for exported solar by time band. Our FiT
+    snapshot for WA currently spans about <Fig>{fits.minCPerKwh}</Fig>–
+    <Fig>{fits.maxCPerKwh}</Fig> c/kWh across reference offers (verified{' '}
+    {formatDateLong(fits.lastVerified)}). Midday exports are often at the bottom of that range; evening
+    bands are higher — but still a fraction of the retail import rate you avoid by self-consuming.
+  </p>
+  <p>
+    That is why batteries show up in WA payback conversations even when the export tariff looks “fine”
+    on paper. Shifting your own evening cooking and air-con load displaces expensive imports. Exporting
+    surplus at a few cents is the leftover, not the plan. See also our{' '}
+    <a href="/feed-in-tariffs/">feed-in tariff overview</a> and{' '}
+    <a href="/guides/is-a-battery-worth-it/">is a battery worth it?</a> guide.
+  </p>
+
+  <h2 id="stacking">Worked stacking example: {ref.usableKwh} kWh</h2>
+  <p>
+    Using the site’s Powerwall-class reference system (
+    <Fig>{ref.label}</Fig>, typical installed cost <Fig>{formatAud(ref.typicalInstalledCost)}</Fig>
+    ):
+  </p>
+  <DataTable
+    caption="13.5 kWh stacking — federal + WA scheme"
+    headers={['Component', 'Synergy customer', 'Horizon customer']}
+    rows={[
+      ['Federal rebate', formatAud(federal.federalRebate), formatAud(federal.federalRebate)],
+      ['WA scheme', formatAud(synergyAmt), formatAud(horizonAmt)],
+      ['Combined support', formatAud(synergyTotal), formatAud(horizonTotal)],
+      ['Illustrative net cost', formatAud(synergyNet), formatAud(horizonNet)],
+    ]}
+    numericCols={[1, 2]}
+  />
+  <p>
+    Notice the WA lines hit the cap: <Fig>{ref.usableKwh}</Fig> × Synergy’s per-kWh rate exceeds{' '}
+    <Fig>{formatAud(synergy.cap!)}</Fig>, so the state payment stops at the cap. Same pattern for
+    Horizon at <Fig>{formatAud(horizon.cap!)}</Fig>. Oversizing past the federal full-rate band (14 kWh)
+    does not unlock more state dollars once the cap is reached.
+  </p>
+
+  <h2 id="perth-costs">Perth install-cost note</h2>
+  <p>
+    Perth quotes for a mid-size battery commonly land in a band around the reference{' '}
+    <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> before rebates, but site works, inverter pairing,
+    three-phase upgrades, and product choice move that number. Freight into WA and installer diaries also
+    matter. Treat published “from” prices as marketing floors; the stacking table above is for comparing
+    support dollars, not for locking a contract price.
+  </p>
+  <p>
+    For a package view that includes panels, see{' '}
+    <a href="/costs/solar-battery-package-perth/">solar + battery package costs in Perth</a>.
+  </p>
+
+  <h2 id="eligibility">Eligibility checklist (both layers)</h2>
+  <h3>Federal</h3>
+  <ul>
+    <li>Battery on the CEC-approved list for the program</li>
+    <li>Accredited installer; one system per property under program rules</li>
+    <li>Usable / nominal capacity within the published eligible range</li>
+    <li>Grid-connected systems: VPP-capable where required</li>
+  </ul>
+  <h3>WA Synergy stream</h3>
+  <ul>
+    {synergy.eligibility.map((item) => <li>{item}</li>)}
+  </ul>
+  <h3>WA Horizon stream</h3>
+  <ul>
+    {horizon.eligibility.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <p>
+    <CtaButton href="/battery-rebate/calculator/">Calculate my federal rebate</CtaButton>
+  </p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>
+      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    </li>
+    <li>
+      <a href={synergy.sourceUrl}>{synergy.name}</a>
+    </li>
+    <li>
+      <a href={horizon.sourceUrl}>{horizon.name}</a>
+    </li>
+    <li>
+      <a href={fits.sourceUrl}>Synergy / DEBS reference</a>
+    </li>
+  </ul>
+
+  <FaqBlock items={faq} />
+</Article>

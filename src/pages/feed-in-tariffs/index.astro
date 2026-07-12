@@ -1,0 +1,99 @@
+---
+import Article from '../../layouts/Article.astro';
+import Fig from '../../components/Fig.astro';
+import DataTable from '../../components/DataTable.astro';
+import CtaButton from '../../components/CtaButton.astro';
+import { getFits, getRebates } from '../../lib/data';
+import { formatDateLong } from '../../lib/rebate';
+
+const rebates = getRebates();
+const fits = getFits();
+
+const rows = fits.states.map((s) => [
+  s.name,
+  `${s.minCPerKwh}–${s.maxCPerKwh}`,
+  s.referenceRetailers.join(', '),
+  formatDateLong(s.lastVerified),
+]);
+
+const description =
+  'Australian solar feed-in tariff ranges by state. FiTs are falling in many areas — which strengthens the case for self-consumption and batteries.';
+---
+
+<Article
+  title="Solar feed-in tariffs by state"
+  description={description}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Feed-in tariffs' }]}
+  updated="2026-07-12"
+  verified={rebates.meta.lastVerified}
+>
+  <Fragment slot="toc">
+    <ul>
+      <li><a href="#why">Why FiTs matter for batteries</a></li>
+      <li><a href="#table">State ranges</a></li>
+      <li><a href="#how-to-use">How to use this table</a></li>
+      <li><a href="#next">Next steps</a></li>
+    </ul>
+  </Fragment>
+
+  <p>
+    A feed-in tariff (FiT) is what your retailer pays for solar you export. Across Australia those rates
+    are generally far below what you pay to import power in the evening. When midday exports sit at a few
+    cents per kilowatt-hour, storing energy for dinner-time load often beats selling it — that is the
+    core battery case, not a promise that every FiT is “bad”.
+  </p>
+
+  <h2 id="why">Why falling FiTs strengthen the battery case</h2>
+  <p>
+    High historical FiTs once made export-heavy systems look brilliant on paper. As minimums and retailer
+    offers compressed, the spread between import and export widened. A battery’s job is to capture that
+    spread by shifting your own generation. Pair the ranges below with our{' '}
+    <a href="/guides/is-a-battery-worth-it/">worth-it guide</a> rather than treating a FiT alone as a
+    yes/no on solar.
+  </p>
+
+  <h2 id="table">Representative FiT ranges</h2>
+  <DataTable
+    caption="Indicative retailer FiT ranges (c/kWh) — confirm on Energy Made Easy or your bill"
+    headers={['State / territory', 'Range (c/kWh)', 'Reference retailers', 'Verified']}
+    rows={rows}
+    numericCols={[1]}
+  />
+  <p>
+    Ranges are snapshots from our <code>fits.json</code> data file, last aligned with sources on the dates
+    shown. WA’s DEBS time bands, for example, mean a single “flat FiT” number is often misleading —
+    evening export credits can sit near the top of the <Fig>
+      {fits.states.find((s) => s.code === 'wa')!.minCPerKwh}–{fits.states.find((s) => s.code === 'wa')!
+        .maxCPerKwh}
+    </Fig>{' '}
+    c/kWh band while midday sits lower.
+  </p>
+
+  <h2 id="how-to-use">How to use this table</h2>
+  <ol>
+    <li>Find your state row and note the range — not a single promised rate.</li>
+    <li>Check your actual plan on the bill or Energy Made Easy.</li>
+    <li>Compare export cents with your evening import rate.</li>
+    <li>
+      If you export heavily at the bottom of the range and import at night, model a battery with{' '}
+      <a href="/battery-rebate/calculator/">current rebate rates</a>.
+    </li>
+  </ol>
+
+  <h2 id="next">Next steps</h2>
+  <p>
+    <CtaButton href="/guides/is-a-battery-worth-it/">Read: is a battery worth it?</CtaButton>
+  </p>
+  <ul>
+    {
+      fits.states.map((s) => (
+        <li>
+          <a href={s.sourceUrl}>
+            {s.name} source
+          </a>
+          {s.note ? ` — ${s.note}` : ''}
+        </li>
+      ))
+    }
+  </ul>
+</Article>
