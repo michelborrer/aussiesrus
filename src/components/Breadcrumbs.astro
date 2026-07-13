@@ -12,6 +12,9 @@ interface Props {
 
 const { items } = Astro.props;
 
+// Home is always rendered first, so drop any redundant Home passed by callers.
+const crumbs = items.filter((item) => item.label !== 'Home' && item.href !== '/');
+
 const ld = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -22,7 +25,7 @@ const ld = {
       name: 'Home',
       item: SITE.url,
     },
-    ...items.map((item, i) => ({
+    ...crumbs.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 2,
       name: item.label,
@@ -36,7 +39,7 @@ const ld = {
   <ol>
     <li><a href="/">Home</a></li>
     {
-      items.map((item) => (
+      crumbs.map((item) => (
         <li>
           {item.href ? <a href={item.href}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
         </li>
