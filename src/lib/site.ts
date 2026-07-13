@@ -4,17 +4,9 @@ export const SITE = {
   url: 'https://aussiesrus.com.au',
   description:
     "Australia's independent solar & battery guide. Every figure verified against the Clean Energy Regulator.",
-  /** Owner supplies final ABN before launch — empty string renders as "ABN pending" */
-  operatorName: 'Michel Borrer',
-  abn: '',
   contactEmail: 'hello@aussiesrus.com.au',
   locale: 'en-AU',
 } as const;
-
-/** Display label while ABN is not yet supplied. */
-export function abnDisplay(abn: string = SITE.abn): string {
-  return abn.trim() ? abn : 'ABN pending';
-}
 
 export const FOOTER_DISCLOSURE =
   'Aussies R Us is an independent information site. We may earn a commission from some links, and this is always disclosed. Figures are general information only, not financial advice — rebate values depend on your installation date and eligibility; confirm with the Clean Energy Regulator and your installer.';

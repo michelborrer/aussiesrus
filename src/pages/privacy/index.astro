@@ -1,6 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
-import { abnDisplay, SITE } from '../../lib/site';
+import { SITE } from '../../lib/site';
 
 const description = `Privacy policy for ${SITE.name} — what we collect, ads, affiliate links, and how quote/contact form data may be shared with partners.`;
 ---
@@ -12,7 +12,7 @@ const description = `Privacy policy for ${SITE.name} — what we collect, ads, a
   updated="2026-07-12"
   showMiniBoard={false}
 >
-  <p>Last updated: 12 July 2026. Operator: {SITE.operatorName}. Contact: {SITE.contactEmail}. {abnDisplay()}.</p>
+  <p>Last updated: 12 July 2026. Operator: {SITE.name}. Contact: {SITE.contactEmail}.</p>
 
   <h2>Who we are</h2>
   <p>

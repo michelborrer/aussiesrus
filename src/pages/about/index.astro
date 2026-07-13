@@ -1,13 +1,13 @@
 ---
 import Article from '../../layouts/Article.astro';
 import Fig from '../../components/Fig.astro';
-import { abnDisplay, SITE } from '../../lib/site';
+import { SITE } from '../../lib/site';
 import { getRebates } from '../../lib/data';
 import { formatDateLong } from '../../lib/rebate';
 
 const rebates = getRebates();
 
-const description = `Who runs ${SITE.name}: ${SITE.operatorName}, WA-based. How we verify rebate figures, how we make money, and what we will never do.`;
+const description = `Who runs ${SITE.name}: an independent, WA-based publisher. How we verify rebate figures, how we make money, and what we will never do.`;
 ---
 
 <Article
@@ -36,14 +36,13 @@ const description = `Who runs ${SITE.name}: ${SITE.operatorName}, WA-based. How 
 
   <h2 id="who">Who runs this</h2>
   <p>
-    The site is operated by <strong>{SITE.operatorName}</strong>, based in Western Australia. WA is not a
+    The site is independently operated from Western Australia. WA is not a
     coincidence: Synergy versus Horizon rules, DEBS export bands, and Perth install pricing are easy to
     get wrong from a generic national brochure. We write the national pages carefully and the WA pages
     with local depth on purpose.
   </p>
   <p>
     Contact: <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> · <a href="/contact/">Contact form</a>.
-    {abnDisplay()}.
   </p>
 
   <h2 id="why">Why it exists</h2>
@@ -54,8 +53,8 @@ const description = `Who runs ${SITE.name}: ${SITE.operatorName}, WA-based. How 
   </p>
   <p>
     Independence is the other half. Major quote marketplaces are now owned by energy retailers. We state
-    that as fact on our compare pages and keep our own ownership simple: this is an information site run
-    by {SITE.operatorName}, not a retailer subsidiary.
+    that as fact on our compare pages and keep our own ownership simple: this is an independently run
+    information site, not a retailer subsidiary.
   </p>
 
   <h2 id="method">Verification methodology</h2>

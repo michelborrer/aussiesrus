@@ -33,6 +33,7 @@ const { lastVerified } = Astro.props;
     <p class="footer-verify">
       Figures verified against the Clean Energy Regulator — last update {formatDateLong(lastVerified)}.
     </p>
+    <p class="footer-copyright">© 2026 Aussies R Us</p>
   </div>
 </footer>
 
@@ -59,10 +60,15 @@ const { lastVerified } = Astro.props;
   }
 
   .footer-disclosure,
-  .footer-verify {
+  .footer-verify,
+  .footer-copyright {
     color: color-mix(in srgb, var(--paper) 78%, transparent);
     font-size: var(--t-meta);
     line-height: 1.55;
+  }
+
+  .footer-copyright {
+    margin-top: var(--s-3);
   }
 
   .footer-links a {

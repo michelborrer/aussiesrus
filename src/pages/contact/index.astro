@@ -1,7 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
 import QuoteForm from '../../components/QuoteForm.astro';
-import { abnDisplay, SITE } from '../../lib/site';
+import { SITE } from '../../lib/site';
 
 const description = `Contact ${SITE.name} — questions about rebate figures, corrections, or press.`;
 ---
@@ -18,7 +18,7 @@ const description = `Contact ${SITE.name} — questions about rebate figures, co
     installer dispatch desk — for install quotes see the (currently unlisted){' '} <a href="/quotes/">quote form</a> when you are ready.
   </p>
   <p>
-    Operator: {SITE.operatorName} · {abnDisplay()} · Based in Western Australia.
+    {SITE.name} is based in Western Australia.
   </p>
 
   <h2>Send a message</h2>

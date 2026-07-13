@@ -1,6 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
-import { abnDisplay, SITE } from '../../lib/site';
+import { SITE } from '../../lib/site';
 
 const description = `Terms of use for ${SITE.name} — information only, not financial advice, and limits on liability.`;
 ---
@@ -12,7 +12,7 @@ const description = `Terms of use for ${SITE.name} — information only, not fin
   updated="2026-07-12"
   showMiniBoard={false}
 >
-  <p>Last updated: 12 July 2026. Operator: {SITE.operatorName} ({abnDisplay()}).</p>
+  <p>Last updated: 12 July 2026. Operator: {SITE.name}.</p>
 
   <h2>Agreement</h2>
   <p>
@@ -47,7 +47,7 @@ const description = `Terms of use for ${SITE.name} — information only, not fin
 
   <h2>Intellectual property</h2>
   <p>
-    Site design, original text, and branding are owned by {SITE.operatorName} unless otherwise noted. You may
+    Site design, original text, and branding are owned by {SITE.name} unless otherwise noted. You may
     quote short excerpts with attribution and a link for non-commercial commentary.
   </p>
 
