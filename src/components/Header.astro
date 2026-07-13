@@ -27,22 +27,57 @@ function isActive(href: string): boolean {
       <span class="wordmark-text">Aussies R Us</span>
     </a>
 
-    <nav class="nav" aria-label="Primary">
+    <details class="nav-mobile">
+      <summary class="nav-toggle">Menu</summary>
+      <nav class="nav-panel" aria-label="Primary">
+        <ul class="nav-panel-list">
+          {
+            NAV.map((item) => (
+              <li>
+                <a class:list={['panel-link', { active: isActive(item.href) }]} href={item.href}>
+                  {item.label}
+                </a>
+                {'children' in item && item.children && (
+                  <ul class="panel-children">
+                    {item.children.map((child) => (
+                      <li>
+                        <a
+                          class:list={['panel-child', { active: path === child.href }]}
+                          href={child.href}
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </details>
+
+    <nav class="nav-desktop" aria-label="Primary">
       <ul class="nav-list">
         {
           NAV.map((item) => (
             <li class:list={['nav-item', { 'has-children': 'children' in item && item.children }]}>
               {'children' in item && item.children ? (
-                <>
-                  <a
-                    class:list={['nav-link', { active: isActive(item.href) }]}
-                    href={item.href}
-                    aria-haspopup="true"
-                  >
+                <details class="nav-disclosure">
+                  <summary class:list={['nav-link', { active: isActive(item.href) }]}>
                     {item.label}
                     <span class="caret" aria-hidden="true">▾</span>
-                  </a>
+                  </summary>
                   <ul class="dropdown">
+                    <li>
+                      <a
+                        class:list={['dropdown-link', { active: path === item.href }]}
+                        href={item.href}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
                     {item.children.map((child) => (
                       <li>
                         <a
@@ -54,7 +89,7 @@ function isActive(href: string): boolean {
                       </li>
                     ))}
                   </ul>
-                </>
+                </details>
               ) : (
                 <a class:list={['nav-link', { active: isActive(item.href) }]} href={item.href}>
                   {item.label}
@@ -67,6 +102,31 @@ function isActive(href: string): boolean {
     </nav>
   </div>
 </header>
+
+<script>
+  function closeAll(except?: HTMLDetailsElement) {
+    document.querySelectorAll<details>('.nav-disclosure[open], .nav-mobile[open]').forEach((el) => {
+      if (el !== except) el.open = false;
+    });
+  }
+
+  document.querySelectorAll<details>('.nav-disclosure, .nav-mobile').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      if (el.open) closeAll(el);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAll();
+  });
+
+  document.addEventListener('click', (e) => {
+    const t = e.target as Node | null;
+    if (!t) return;
+    const inside = (t as Element).closest?.('.nav-disclosure, .nav-mobile, .site-header');
+    if (!inside) closeAll();
+  });
+</script>
 
 <style>
   .site-header {
@@ -101,6 +161,98 @@ function isActive(href: string): boolean {
     text-transform: uppercase;
   }
 
+  .nav-mobile {
+    display: none;
+    position: relative;
+  }
+
+  .nav-toggle {
+    list-style: none;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--s-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-s);
+    background: var(--paper);
+    font: inherit;
+    font-weight: 600;
+    font-size: var(--t-meta);
+    color: var(--ink);
+  }
+
+  .nav-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-panel {
+    position: absolute;
+    top: calc(100% + var(--s-2));
+    right: 0;
+    left: auto;
+    width: min(calc(100vw - (var(--gutter) * 2)), 22rem);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+    padding: var(--s-3);
+    z-index: 60;
+    max-height: min(70vh, 32rem);
+    overflow-y: auto;
+  }
+
+  .nav-panel-list,
+  .panel-children {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .panel-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: var(--r-s);
+  }
+
+  .panel-link.active,
+  .panel-child.active {
+    color: var(--eucalypt);
+  }
+
+  .panel-children {
+    padding: 0 0 var(--s-3) var(--s-3);
+    margin-bottom: var(--s-2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-panel-list > li:last-child .panel-children {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .panel-child {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: var(--t-meta);
+    border-radius: var(--r-s);
+  }
+
+  .panel-link:hover,
+  .panel-child:hover {
+    background: var(--paper-dim);
+  }
+
   .nav-list {
     display: flex;
     flex-wrap: wrap;
@@ -126,6 +278,21 @@ function isActive(href: string): boolean {
     font-weight: 600;
     font-size: var(--t-meta);
     border-bottom: 2px solid transparent;
+    cursor: pointer;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: inherit;
+    list-style: none;
+  }
+
+  .nav-disclosure > summary.nav-link {
+    list-style: none;
+  }
+
+  .nav-disclosure > summary.nav-link::-webkit-details-marker {
+    display: none;
   }
 
   .nav-link.active,
@@ -153,8 +320,7 @@ function isActive(href: string): boolean {
     z-index: 50;
   }
 
-  .nav-item:hover .dropdown,
-  .nav-item:focus-within .dropdown {
+  .nav-disclosure[open] > .dropdown {
     display: block;
   }
 
@@ -174,32 +340,19 @@ function isActive(href: string): boolean {
     color: var(--eucalypt);
   }
 
-  @media (max-width: 820px) {
-    .header-inner {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .nav {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    .nav-list {
-      justify-content: flex-start;
-      flex-wrap: nowrap;
-    }
-
-    .dropdown {
-      position: static;
-      border: none;
-      padding: 0 0 0 var(--s-3);
+  @media (max-width: 768px) {
+    .nav-desktop {
       display: none;
     }
 
-    .nav-item:hover .dropdown,
-    .nav-item:focus-within .dropdown {
+    .nav-mobile {
       display: block;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .nav-mobile {
+      display: none;
     }
   }
 </style>
