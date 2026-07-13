@@ -4,7 +4,9 @@ import { getChangelog, getRebates } from '../../lib/data';
 import { formatDateLong } from '../../lib/rebate';
 
 const rebates = getRebates();
-const entries = getChangelog().entries;
+const changelog = getChangelog();
+const entries = changelog.entries;
+const programHistory = changelog.programHistory ?? [];
 
 const description =
   'Changelog of verified rebate, FiT and cost data updates on Aussies R Us — every material change, dated, with affected pages.';
@@ -19,10 +21,12 @@ const description =
 >
   <Fragment slot="toc">
     <ul>
-      {entries.slice(0, 8).map((e) => (
-        <li> <a href={`#e-${e.date}`}>{formatDateLong(e.date)}</a>
+      <li><a href="#verification-log">Verification log</a></li>
+      {programHistory.length > 0 && (
+        <li>
+          <a href="#program-history">Program history</a>
         </li>
-      ))}
+      )}
     </ul>
   </Fragment>
 
@@ -32,20 +36,26 @@ const description =
     via <a href="/rss.xml">RSS</a>.
   </p>
 
+  <h2 id="verification-log">Verification log</h2>
+  <p class="section-lead">
+    Site activity only — checks and data updates we actually performed on Aussies R Us.
+  </p>
+
   <ol class="changelog">
     {
       entries.map((entry) => (
         <li id={`e-${entry.date}`}>
-          <h2>
+          <h3>
             <time datetime={entry.date}>{formatDateLong(entry.date)}</time>
-          </h2>
+          </h3>
           <p>{entry.summary}</p>
           {entry.affectedPages.length > 0 && (
             <p class="affected">
               Affected:{' '}
               {entry.affectedPages.map((path, i) => (
                 <>
-                  {i > 0 && ', '} <a href={path.endsWith('/') || path === '/' ? path : `${path}/`}>{path}</a>
+                  {i > 0 && ', '}
+                  <a href={path.endsWith('/') || path === '/' ? path : `${path}/`}>{path}</a>
                 </>
               ))}
             </p>
@@ -54,9 +64,37 @@ const description =
       ))
     }
   </ol>
+
+  {
+    programHistory.length > 0 && (
+      <section class="program-history" aria-labelledby="program-history">
+        <h2 id="program-history">Program history</h2>
+        <p class="section-lead">
+          Background context on the federal program and related industry events. These entries predate
+          this site and are not verification activity.
+        </p>
+        <ol class="changelog changelog--history">
+          {programHistory.map((entry) => (
+            <li id={`h-${entry.date}`}>
+              <h3>
+                <time datetime={entry.date}>{formatDateLong(entry.date)}</time>
+              </h3>
+              <p>{entry.summary}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
 </Article>
 
 <style>
+  .section-lead {
+    color: var(--ink-soft);
+    font-size: var(--t-meta);
+    margin-top: calc(var(--s-2) * -1);
+  }
+
   .changelog {
     list-style: none;
     padding: 0;
@@ -68,7 +106,7 @@ const description =
     border-top: 1px solid var(--line);
   }
 
-  .changelog h2 {
+  .changelog h3 {
     font-size: var(--t-h3);
     font-family: var(--font-body);
     font-weight: 600;
@@ -78,5 +116,22 @@ const description =
   .affected {
     font-size: var(--t-meta);
     color: var(--ink-soft);
+  }
+
+  .program-history {
+    margin-top: var(--s-8);
+    padding: var(--s-6);
+    background: var(--paper-dim);
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+  }
+
+  .program-history .changelog {
+    margin-top: var(--s-5);
+  }
+
+  .changelog--history > li:first-child {
+    border-top: none;
+    padding-top: 0;
   }
 </style>

@@ -111,6 +111,14 @@ export const changelogSchema = z.object({
       affectedPages: z.array(z.string()),
     }),
   ),
+  programHistory: z
+    .array(
+      z.object({
+        date: dateString,
+        summary: z.string(),
+      }),
+    )
+    .default([]),
 });
 
 export type Rebates = z.infer<typeof rebatesSchema>;

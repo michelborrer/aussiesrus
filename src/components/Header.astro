@@ -105,12 +105,14 @@ function isActive(href: string): boolean {
 
 <script>
   function closeAll(except?: HTMLDetailsElement) {
-    document.querySelectorAll<details>('.nav-disclosure[open], .nav-mobile[open]').forEach((el) => {
-      if (el !== except) el.open = false;
-    });
+    document
+      .querySelectorAll<HTMLDetailsElement>('.nav-disclosure[open], .nav-mobile[open]')
+      .forEach((el) => {
+        if (el !== except) el.open = false;
+      });
   }
 
-  document.querySelectorAll<details>('.nav-disclosure, .nav-mobile').forEach((el) => {
+  document.querySelectorAll<HTMLDetailsElement>('.nav-disclosure, .nav-mobile').forEach((el) => {
     el.addEventListener('toggle', () => {
       if (el.open) closeAll(el);
     });
