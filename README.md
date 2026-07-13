@@ -60,7 +60,7 @@ To enable Phase 2:
 ## Owner inputs still required before launch (§11)
 
 - Top ~20 Ahrefs backlink URLs → `public/_redirects` / archive stubs
-- Final ABN (currently placeholder in `src/lib/site.ts`)
+- Final ABN (set `abn` in `src/lib/site.ts`; empty renders as “ABN pending”)
 - Sign-off on all `⚠ VERIFY` values in data files
 - Production Turnstile + GHL credentials
 

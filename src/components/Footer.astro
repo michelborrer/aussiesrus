@@ -1,5 +1,5 @@
 ---
-import { FOOTER_DISCLOSURE, SITE } from '../lib/site';
+import { abnDisplay, FOOTER_DISCLOSURE, SITE } from '../lib/site';
 import { formatDateLong } from '../lib/rebate';
 
 interface Props {
@@ -16,8 +16,8 @@ const { lastVerified } = Astro.props;
         <p class="footer-brand">Aussies R Us</p>
         <p class="footer-disclosure">{FOOTER_DISCLOSURE}</p>
         <p class="footer-meta">
-          Operated by {SITE.operator} · {SITE.abn} ·
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          Operated by {SITE.operatorName} · {abnDisplay()} ·{' '}
+          <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>
         </p>
       </div>
       <nav aria-label="Footer">
