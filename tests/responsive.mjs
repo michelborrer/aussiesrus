@@ -26,7 +26,21 @@ if (!pages.length) {
   process.exit(1);
 }
 
-const browser = await chromium.launch();
+let browser;
+try {
+  browser = await chromium.launch();
+} catch (err) {
+  // Cloudflare Pages (and other CI images) install npm deps but not Playwright
+  // browser binaries. Skip rather than fail the deploy build; the check still
+  // runs locally and in CI environments where the browser is present.
+  const msg = err instanceof Error ? err.message : String(err);
+  if (/Executable doesn'?t exist|playwright install/i.test(msg)) {
+    console.log('Responsive: skipped (Playwright browser not installed)');
+    process.exit(0);
+  }
+  throw err;
+}
+
 const failures = [];
 
 try {
