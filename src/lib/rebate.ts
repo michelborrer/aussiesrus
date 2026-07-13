@@ -65,6 +65,35 @@ export function nextStepDown(rebates: Rebates, today = new Date()): { date: stri
   return { date, days };
 }
 
+export type ScheduleStatusLabel = 'Current' | 'Historical' | 'Announced';
+
+/** Display status for a step-down / history row. Exactly one row is Current. */
+export function scheduleStatus(
+  effectiveFrom: string,
+  allEffectiveFrom: string[],
+  today = new Date(),
+): ScheduleStatusLabel {
+  const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const rowUtc = Date.parse(`${effectiveFrom}T00:00:00Z`);
+  if (rowUtc > todayUtc) return 'Announced';
+
+  const current = [...allEffectiveFrom]
+    .filter((d) => Date.parse(`${d}T00:00:00Z`) <= todayUtc)
+    .sort()
+    .at(-1);
+
+  return effectiveFrom === current ? 'Current' : 'Historical';
+}
+
+/** Next announced (future) step-down — same date set the Rate Board countdown uses. */
+export function announcedStepDowns(rebates: Rebates, today = new Date()): string[] {
+  const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  return rebates.schedule
+    .map((s) => s.effectiveFrom)
+    .filter((d) => Date.parse(`${d}T00:00:00Z`) > todayUtc)
+    .sort();
+}
+
 export function formatAud(n: number): string {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',

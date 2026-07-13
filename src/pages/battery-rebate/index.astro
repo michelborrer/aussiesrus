@@ -14,6 +14,7 @@ import {
   formatAud,
   formatDateLong,
   nextStepDown,
+  scheduleStatus,
 } from '../../lib/rebate';
 
 const rebates = getRebates();
@@ -33,18 +34,23 @@ const tierRows = rebates.current.tiers.map((t) => [
   (rebates.current.stcFactor * (t.factorPct / 100)).toFixed(2),
 ]);
 
+const allEffectiveFrom = [
+  ...rebates.history.map((h) => h.effectiveFrom),
+  ...rebates.schedule.map((s) => s.effectiveFrom),
+];
+
 const scheduleRows = [
   ...rebates.history.map((h) => [
     formatDateLong(h.effectiveFrom),
     String(h.stcFactor),
     h.flat ? 'Flat rate' : 'Tiered',
-    'Historical',
+    scheduleStatus(h.effectiveFrom, allEffectiveFrom),
   ]),
   ...rebates.schedule.map((s) => [
     formatDateLong(s.effectiveFrom),
     s.stcFactor != null ? String(s.stcFactor) : 'TBA',
     'Step-down',
-    s.status,
+    scheduleStatus(s.effectiveFrom, allEffectiveFrom),
   ]),
 ];
 
