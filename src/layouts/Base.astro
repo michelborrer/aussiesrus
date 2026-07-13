@@ -70,7 +70,7 @@ const schemas = [orgLd, websiteLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]
     <meta property="og:locale" content="en_AU" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#F2A900" />
+    <meta name="color-scheme" content="light" />
     {
       schemas.map((s) => (
         <script is:inline type="application/ld+json" set:html={JSON.stringify(s)} />

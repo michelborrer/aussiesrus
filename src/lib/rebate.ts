@@ -85,15 +85,6 @@ export function scheduleStatus(
   return effectiveFrom === current ? 'Current' : 'Historical';
 }
 
-/** Next announced (future) step-down — same date set the Rate Board countdown uses. */
-export function announcedStepDowns(rebates: Rebates, today = new Date()): string[] {
-  const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-  return rebates.schedule
-    .map((s) => s.effectiveFrom)
-    .filter((d) => Date.parse(`${d}T00:00:00Z`) > todayUtc)
-    .sort();
-}
-
 export function formatAud(n: number): string {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',

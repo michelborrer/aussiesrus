@@ -37,10 +37,16 @@ Build fails if any `lastVerified` is older than 120 days.
 
 | Name | Scope | Purpose |
 |---|---|---|
-| `GHL_WEBHOOK_URL` | Secret | GoHighLevel inbound webhook |
+| `GHL_WEBHOOK_URL` | Secret | GoHighLevel inbound webhook (lead/contact POST target) |
 | `TURNSTILE_SECRET_KEY` | Secret | Turnstile server verify |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Public | Turnstile widget |
-| `OWNER_EMAIL` | Secret | MailChannels fallback recipient |
+| `OWNER_EMAIL` | Secret | MailChannels fallback recipient when GHL is unset or fails |
+
+Local/CI: if these are unset, `/api/lead` rejects Turnstile verification and falls back to MailChannels when the webhook is missing. Unit tests mock the webhook POST (`tests/lead.test.ts`).
+
+## Data-change changelog guard
+
+`npm run build` runs `tests/changelog-on-data-change.mjs`: if the current commit touches `src/data/*.json` other than `changelog.json`, that commit’s date must appear in `changelog.json` `entries[]`.
 
 ## Weekly rebuild cron
 

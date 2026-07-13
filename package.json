@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:responsive": "node tests/responsive.mjs",
     "test:whitespace": "node tests/whitespace-check.mjs",
-    "build": "astro check && vitest run && astro build && node tests/whitespace-check.mjs && node tests/responsive.mjs",
+    "test:changelog": "node tests/changelog-on-data-change.mjs",
+    "build": "astro check && vitest run && node tests/changelog-on-data-change.mjs && astro build && node tests/whitespace-check.mjs && node tests/responsive.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
