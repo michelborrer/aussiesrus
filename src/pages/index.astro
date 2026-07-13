@@ -137,13 +137,13 @@ const description = `Currently $${perKwh.toFixed(0)} per usable kWh under the Ch
 
   @media (min-width: 768px) {
     .pathway-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .hero-grid {
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
       gap: var(--s-7);
     }
   }

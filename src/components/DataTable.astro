@@ -40,10 +40,13 @@ const { caption, headers, rows, numericCols = [] } = Astro.props;
 <style>
   .table-wrap {
     width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     margin: var(--s-5) 0;
     border: 1px solid var(--line);
     border-radius: var(--r-m);
+    contain: inline-size;
   }
 
   table {
@@ -98,5 +101,12 @@ const { caption, headers, rows, numericCols = [] } = Astro.props;
 
   tbody tr:nth-child(even) td:first-child {
     background: var(--paper-dim);
+  }
+
+  @media (max-width: 520px) {
+    td:first-child,
+    th:first-child {
+      position: static;
+    }
   }
 </style>

@@ -237,7 +237,8 @@ const description = `Estimate your Cheaper Home Batteries discount from usable k
 <style>
   .calc {
     margin: var(--s-6) 0 var(--s-7);
-    max-width: 1120px;
+    max-width: min(100%, 1120px);
+    min-width: 0;
   }
 
   .calc-grid {
@@ -330,9 +331,15 @@ const description = `Estimate your Cheaper Home Batteries discount from usable k
 
   .result-meta {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--s-3);
     margin: 0 0 var(--s-4);
+  }
+
+  @media (max-width: 400px) {
+    .result-meta {
+      grid-template-columns: 1fr;
+    }
   }
 
   .result-meta dt {
@@ -402,9 +409,9 @@ const description = `Estimate your Cheaper Home Batteries discount from usable k
     background: var(--sun-tint);
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .calc-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       align-items: start;
     }
   }

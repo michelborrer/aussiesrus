@@ -203,6 +203,11 @@ li + li {
   border: 0;
 }
 
+.prose {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .prose > * + h2 {
   margin-top: var(--s-7);
 }
@@ -219,6 +224,8 @@ li + li {
   margin-top: var(--s-7);
   padding-top: var(--s-5);
   border-top: 1px solid var(--line);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .sources h2 {

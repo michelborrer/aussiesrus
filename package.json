@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "check": "astro check",
     "test": "vitest run",
-    "build": "astro check && vitest run && astro build",
+    "test:responsive": "node tests/responsive.mjs",
+    "build": "astro check && vitest run && astro build && node tests/responsive.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -24,6 +25,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "playwright": "^1.52.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
