@@ -152,17 +152,12 @@ const description = `${state.name} battery rebate stacking with the federal disc
 
   <h2 id="federal">Federal recap</h2>
   <p>
-    Since <Fig>1 May 2026</Fig> the federal discount uses STC factor{' '}
-    <Fig>{rebates.current.stcFactor}</Fig> with tiers at <Fig>100%</Fig> / <Fig>60%</Fig> /{' '}
-    <Fig>15%</Fig> across usable bands to <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh. The installer
-    usually applies it at point of sale. See{' '}
-    <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> if an older flat-rate
+    Since <Fig>1 May 2026</Fig> the federal discount uses STC factor{' '} <Fig>{rebates.current.stcFactor}</Fig> with tiers at <Fig>100%</Fig> / <Fig>60%</Fig> /{' '} <Fig>15%</Fig> across usable bands to <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh. The installer
+    usually applies it at point of sale. See{' '} <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> if an older flat-rate
     quote does not match a new one.
   </p>
   <p>
-    For our shared <Fig>{ref.usableKwh}</Fig> kWh reference battery, the federal line is{' '}
-    <Fig>{formatAud(federal.federalRebate)}</Fig> at the assumed net STC price of{' '}
-    <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>.
+    For our shared <Fig>{ref.usableKwh}</Fig> kWh reference battery, the federal line is{' '} <Fig>{formatAud(federal.federalRebate)}</Fig> at the assumed net STC price of{' '} <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>.
   </p>
 
   <h2 id="schemes">{state.name} schemes</h2>
@@ -198,18 +193,14 @@ const description = `${state.name} battery rebate stacking with the federal disc
   />
   <Callout type="note" title="Planning figures only">
     <p>
-      {copy.tip} Net cost uses our reference typical installed price of{' '}
-      <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> — your site quote will differ.
+      {copy.tip} Net cost uses our reference typical installed price of{' '} <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> — your site quote will differ.
     </p>
   </Callout>
 
   <h2 id="local">Local context</h2>
   <p>{copy.local}</p>
   <p>
-    Compare other states:{' '}
-    <a href="/battery-rebate/wa/">WA</a>, <a href="/battery-rebate/nsw/">NSW</a>,{' '}
-    <a href="/battery-rebate/vic/">VIC</a>, <a href="/battery-rebate/qld/">QLD</a>,{' '}
-    <a href="/battery-rebate/sa/">SA</a>.
+    Compare other states:{' '} <a href="/battery-rebate/wa/">WA</a>, <a href="/battery-rebate/nsw/">NSW</a>,{' '} <a href="/battery-rebate/vic/">VIC</a>, <a href="/battery-rebate/qld/">QLD</a>,{' '} <a href="/battery-rebate/sa/">SA</a>.
   </p>
 
   <h2 id="eligibility">Eligibility (read both lists)</h2>
@@ -239,12 +230,10 @@ const description = `${state.name} battery rebate stacking with the federal disc
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
     </li>
     {state.schemes.map((s) => (
-      <li>
-        <a href={s.sourceUrl}>{s.name}</a> — verified {formatDateLong(s.lastVerified)}
+      <li> <a href={s.sourceUrl}>{s.name}</a> — verified {formatDateLong(s.lastVerified)}
       </li>
     ))}
   </ul>

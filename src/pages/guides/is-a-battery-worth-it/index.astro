@@ -147,8 +147,7 @@ const description = `Honest battery payback maths for 10, 13.5 and 30 kWh system
   <ul>
     <li>Retail import rate <Fig>{(retailImport * 100).toFixed(0)}</Fig> c/kWh (flat planning rate)</li>
     <li>Foregone export value <Fig>5</Fig> c/kWh when you store instead of export</li>
-    <li>
-      <Fig>{cyclesPerYear}</Fig> equivalent full cycles per year at <Fig>70%</Fig> of usable capacity
+    <li> <Fig>{cyclesPerYear}</Fig> equivalent full cycles per year at <Fig>70%</Fig> of usable capacity
       actually shifted
     </li>
     <li>Federal rebate only (no state stack) at current data-file rates</li>
@@ -177,15 +176,11 @@ const description = `Honest battery payback maths for 10, 13.5 and 30 kWh system
   />
   <p>
     Reading the table honestly: the <Fig>10</Fig> kWh and <Fig>13.5</Fig> kWh packs sit mostly in the
-    federal full-rate band and usually show clearer simple payback under these assumptions. The{' '}
-    <Fig>30</Fig> kWh system receives more rebate dollars in absolute terms but much of its capacity is
+    federal full-rate band and usually show clearer simple payback under these assumptions. The{' '} <Fig>30</Fig> kWh system receives more rebate dollars in absolute terms but much of its capacity is
     in discounted tiers — you need the load (or a clear VPP case) to justify the extra capital.
   </p>
   <p>
-    Cost deep-dives:{' '}
-    <a href="/costs/10kwh-battery-cost/">10 kWh</a>,{' '}
-    <a href="/costs/13-5kwh-battery-cost/">13.5 kWh</a>,{' '}
-    <a href="/costs/solar-battery-package-perth/">Perth solar + battery packages</a>.
+    Cost deep-dives:{' '} <a href="/costs/10kwh-battery-cost/">10 kWh</a>,{' '} <a href="/costs/13-5kwh-battery-cost/">13.5 kWh</a>,{' '} <a href="/costs/solar-battery-package-perth/">Perth solar + battery packages</a>.
   </p>
 
   <h2 id="not-yet">When a battery is not worth it (yet)</h2>
@@ -196,8 +191,7 @@ const description = `Honest battery payback maths for 10, 13.5 and 30 kWh system
     </li>
     <li>
       <strong>Panels-first gap.</strong> If daytime imports are still high and roof space remains, STCs
-      on extra panels often beat a battery on pure $/kWh displaced. See{' '}
-      <a href="/solar-rebate/">solar (panels) rebate</a>.
+      on extra panels often beat a battery on pure $/kWh displaced. See{' '} <a href="/solar-rebate/">solar (panels) rebate</a>.
     </li>
     <li>
       <strong>Tight cash and high interest.</strong> Financing a battery at a rate above your effective
@@ -221,8 +215,7 @@ const description = `Honest battery payback maths for 10, 13.5 and 30 kWh system
       Size usable capacity near that evening block — not “as big as the rebate brochure”.
     </li>
     <li>
-      Run <a href="/battery-rebate/calculator/">current federal rebate</a> and your state’s{' '}
-      <a href="/battery-rebate/wa/">stacking page</a>.
+      Run <a href="/battery-rebate/calculator/">current federal rebate</a> and your state’s{' '} <a href="/battery-rebate/wa/">stacking page</a>.
     </li>
     <li>Collect two to three installer quotes with the same usable kWh and product shortlist.</li>
     <li>Re-run simple payback with your tariff. If it only works with heroic assumptions, wait.</li>
@@ -234,14 +227,11 @@ const description = `Honest battery payback maths for 10, 13.5 and 30 kWh system
 
   <h2 id="sources">Sources and related</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
     </li>
-    <li>
-      <a href="/battery-rebate/">Federal battery rebate hub</a>
+    <li> <a href="/battery-rebate/">Federal battery rebate hub</a>
     </li>
-    <li>
-      <a href="/feed-in-tariffs/">Feed-in tariffs by state</a>
+    <li> <a href="/feed-in-tariffs/">Feed-in tariffs by state</a>
     </li>
     <li>
       FiT snapshot coverage: {fits.states.map((s) => s.code.toUpperCase()).join(', ')}

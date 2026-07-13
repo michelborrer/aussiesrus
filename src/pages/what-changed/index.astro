@@ -20,8 +20,7 @@ const description =
   <Fragment slot="toc">
     <ul>
       {entries.slice(0, 8).map((e) => (
-        <li>
-          <a href={`#e-${e.date}`}>{formatDateLong(e.date)}</a>
+        <li> <a href={`#e-${e.date}`}>{formatDateLong(e.date)}</a>
         </li>
       ))}
     </ul>
@@ -46,8 +45,7 @@ const description =
               Affected:{' '}
               {entry.affectedPages.map((path, i) => (
                 <>
-                  {i > 0 && ', '}
-                  <a href={path.endsWith('/') || path === '/' ? path : `${path}/`}>{path}</a>
+                  {i > 0 && ', '} <a href={path.endsWith('/') || path === '/' ? path : `${path}/`}>{path}</a>
                 </>
               ))}
             </p>

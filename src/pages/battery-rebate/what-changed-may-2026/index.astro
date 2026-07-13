@@ -92,8 +92,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
   <p>
     On <Fig>1 May 2026</Fig> Australia’s Cheaper Home Batteries Program stopped paying a single flat STC
     factor on every usable kilowatt-hour and switched to a three-tier structure. The current tier-1 rate
-    works out to about <Fig>{formatAud(perKwh)}</Fig> per usable kWh at our assumed net STC price of{' '}
-    <Fig>{formatAud(price)}</Fig> (verified {formatDateLong(rebates.meta.lastVerified)}). If you are
+    works out to about <Fig>{formatAud(perKwh)}</Fig> per usable kWh at our assumed net STC price of{' '} <Fig>{formatAud(price)}</Fig> (verified {formatDateLong(rebates.meta.lastVerified)}). If you are
     comparing an old quote with a new one, the gap is almost always this redesign — not a typo.
   </p>
 
@@ -106,9 +105,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
   </p>
   <p>
     From 1 May 2026 the factor is <Fig>{rebates.current.stcFactor}</Fig>, and that factor is only fully
-    applied to the first <Fig>14</Fig> kWh of usable capacity. Capacity from <Fig>14–28</Fig> kWh earns{' '}
-    <Fig>60%</Fig> of the factor. Capacity from <Fig>28–50</Fig> kWh earns <Fig>15%</Fig>. Nothing above{' '}
-    <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh of usable capacity is counted for the federal rebate.
+    applied to the first <Fig>14</Fig> kWh of usable capacity. Capacity from <Fig>14–28</Fig> kWh earns{' '} <Fig>60%</Fig> of the factor. Capacity from <Fig>28–50</Fig> kWh earns <Fig>15%</Fig>. Nothing above{' '} <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh of usable capacity is counted for the federal rebate.
   </p>
 
   <TierBar markerKwh={13.5} />
@@ -118,8 +115,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
       The rate that applies is the one in force on your installation date, not the day you signed the
       quote. {step && (
         <>
-          The next legislated reduction date on our schedule is{' '}
-          <Fig>{formatDateLong(step.date)}</Fig> (in <Fig>{step.days}</Fig> days from this build).
+          The next legislated reduction date on our schedule is{' '} <Fig>{formatDateLong(step.date)}</Fig> (in <Fig>{step.days}</Fig> days from this build).
         </>
       )}
     </p>
@@ -128,8 +124,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
   <h2 id="before-after">Before and after dollars</h2>
   <p>
     The table below uses the January–April 2026 flat factor of <Fig>{preFactor}</Fig> versus today’s
-    tiered <Fig>{rebates.current.stcFactor}</Fig>, both at the same net STC assumption of{' '}
-    <Fig>{formatAud(price)}</Fig>. Figures are floored to whole STCs the same way the calculator does.
+    tiered <Fig>{rebates.current.stcFactor}</Fig>, both at the same net STC assumption of{' '} <Fig>{formatAud(price)}</Fig>. Figures are floored to whole STCs the same way the calculator does.
   </p>
 
   <DataTable
@@ -141,8 +136,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
 
   <p>
     A household-sized <Fig>10</Fig> kWh pack lost a few hundred dollars. A <Fig>13.5</Fig> kWh
-    Powerwall-class unit lost more, but still sits mostly inside the full-rate band. A <Fig>30</Fig> or{' '}
-    <Fig>48</Fig> kWh system — the sizes that benefited most from the old flat maths — saw the steepest
+    Powerwall-class unit lost more, but still sits mostly inside the full-rate band. A <Fig>30</Fig> or{' '} <Fig>48</Fig> kWh system — the sizes that benefited most from the old flat maths — saw the steepest
     cuts because so much of their capacity now sits in the 60% and 15% bands.
   </p>
 
@@ -165,14 +159,12 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
   <h2 id="by-size">What it means at each size</h2>
   <h3>Around 10 kWh</h3>
   <p>
-    You are entirely inside the 100% band. The hit is almost entirely the factor drop from{' '}
-    <Fig>{preFactor}</Fig> to <Fig>{rebates.current.stcFactor}</Fig>, not the tiering. For many homes
+    You are entirely inside the 100% band. The hit is almost entirely the factor drop from{' '} <Fig>{preFactor}</Fig> to <Fig>{rebates.current.stcFactor}</Fig>, not the tiering. For many homes
     this remains the simplest “evening shift” size if daytime solar already covers the day.
   </p>
   <h3>Around 13.5 kWh (Powerwall 3 class)</h3>
   <p>
-    Still almost fully inside the top tier (the band ends at 14 kWh). Federal support after May is about{' '}
-    <Fig>{formatAud(calculateFederalRebate(13.5, rebates, price).federalRebate)}</Fig> at our STC
+    Still almost fully inside the top tier (the band ends at 14 kWh). Federal support after May is about{' '} <Fig>{formatAud(calculateFederalRebate(13.5, rebates, price).federalRebate)}</Fig> at our STC
     assumption — down from the flat-rate figure, but still material when stacked with a state scheme.
   </p>
   <h3>Around 30 kWh</h3>
@@ -183,8 +175,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
   </p>
   <h3>Around 48 kWh and above</h3>
   <p>
-    Most of the pack sits in the discounted bands, and capacity above{' '}
-    <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh usable earns nothing federally. Large systems can
+    Most of the pack sits in the discounted bands, and capacity above{' '} <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh usable earns nothing federally. Large systems can
     still make sense for multi-occupancy, workshops, or high evening loads — just run the numbers without
     assuming flat-rate dollars.
   </p>
@@ -194,8 +185,7 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
     From 2027 the program continues with announced step-down dates every January and July through 2030.
     Exact future STC factors are filled in as the Clean Energy Regulator publishes them; until then our
     schedule table marks those rows as announced dates without a locked factor. This page’s slug stays
-    evergreen — when the next factor lands, we update the data file, rebuild, and note the revision on{' '}
-    <a href="/what-changed/">What changed</a>.
+    evergreen — when the next factor lands, we update the data file, rebuild, and note the revision on{' '} <a href="/what-changed/">What changed</a>.
   </p>
 
   <DataTable
@@ -222,14 +212,11 @@ const description = `On 1 May 2026 the federal battery rebate moved from a flat 
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> — {rebates.meta.administrator}
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> — {rebates.meta.administrator}
     </li>
-    <li>
-      <a href="/battery-rebate/">Federal battery rebate hub</a> — current rates and eligibility
+    <li> <a href="/battery-rebate/">Federal battery rebate hub</a> — current rates and eligibility
     </li>
-    <li>
-      <a href="/what-changed/">Site changelog</a> — every data-file update we publish
+    <li> <a href="/what-changed/">Site changelog</a> — every data-file update we publish
     </li>
   </ul>
 

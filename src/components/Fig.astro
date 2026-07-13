@@ -4,8 +4,9 @@ interface Props {
 }
 
 const { delta } = Astro.props;
+// Astro collapses whitespace around component boundaries when the tag sits on its
+// own line. A leading expression space restores the gap before the figure; HTML
+// collapses a duplicate space when the author already wrote one.
+const html = (await Astro.slots.render('default')).replace(/^\s+|\s+$/g, '');
 ---
-
-<span class:list={['fig', { 'fig--up': delta === 'up', 'fig--down': delta === 'down' }]}
-  ><slot /></span
->
+{' '}<span class:list={['fig', { 'fig--up': delta === 'up', 'fig--down': delta === 'down' }]} set:html={html}></span>

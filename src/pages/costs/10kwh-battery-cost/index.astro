@@ -84,8 +84,7 @@ const description = `Typical 10 kWh home battery cost in Australia after the fed
 
   <h2 id="price">Typical installed price</h2>
   <p>
-    Our planning figure for a turnkey <Fig>10</Fig> kWh battery is{' '}
-    <Fig>{formatAud(sys.typicalInstalledCost)}</Fig> before rebates. That assumes a straightforward
+    Our planning figure for a turnkey <Fig>10</Fig> kWh battery is{' '} <Fig>{formatAud(sys.typicalInstalledCost)}</Fig> before rebates. That assumes a straightforward
     retrofit beside existing solar, not a switchboard rebuild or three-phase special case.
   </p>
 
@@ -101,8 +100,7 @@ const description = `Typical 10 kWh home battery cost in Australia after the fed
     numericCols={[1]}
   />
   <p>
-    Federal support of <Fig>{formatAud(fed.federalRebate)}</Fig> (
-    <Fig>{fed.stcCount}</Fig> STCs) brings the illustrative net to <Fig>{formatAud(net)}</Fig>. Add any
+    Federal support of <Fig>{formatAud(fed.federalRebate)}</Fig> ( <Fig>{fed.stcCount}</Fig> STCs) brings the illustrative net to <Fig>{formatAud(net)}</Fig>. Add any
     state scheme on your <a href="/battery-rebate/wa/">state stacking page</a>.
   </p>
 
@@ -132,11 +130,9 @@ const description = `Typical 10 kWh home battery cost in Australia after the fed
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
     </li>
-    <li>
-      <a href="/guides/is-a-battery-worth-it/">Is a battery worth it?</a>
+    <li> <a href="/guides/is-a-battery-worth-it/">Is a battery worth it?</a>
     </li>
   </ul>
 

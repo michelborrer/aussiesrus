@@ -114,16 +114,14 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
 
   <p>
     The federal <strong>Cheaper Home Batteries Program</strong> currently discounts home batteries by
-    about <Fig>${perKwh.toFixed(0)}</Fig> per usable kilowatt-hour at our assumed STC net price of
-    <Fig>${rebates.stcPrice.netAssumed}</Fig> (STC factor <Fig>{rebates.current.stcFactor}</Fig>,
+    about <Fig>${perKwh.toFixed(0)}</Fig> per usable kilowatt-hour at our assumed STC net price of <Fig>${rebates.stcPrice.netAssumed}</Fig> (STC factor <Fig>{rebates.current.stcFactor}</Fig>,
     effective <Fig>{formatDateLong(rebates.current.effectiveFrom)}</Fig>). That figure is what most
     comparison articles get wrong after each legislated step-down — so we keep it in one data file and
     stamp every page with the date we last checked the Clean Energy Regulator sources.
   </p>
 
   <p>
-    Prefer numbers over narrative? Jump to the
-    <a href="/battery-rebate/calculator/">battery rebate calculator</a> — same maths, live inputs.
+    Prefer numbers over narrative? Jump to the <a href="/battery-rebate/calculator/">battery rebate calculator</a> — same maths, live inputs.
   </p>
 
   <h2 id="current-value">What is the battery rebate worth right now?</h2>
@@ -144,8 +142,7 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
     next && (
       <Callout type="warning" title="Rates follow your installation date">
         <p>
-          Rates are set by your installation date. The next legislated reduction takes effect{' '}
-          <Fig>{formatDateLong(next.date)}</Fig> (in <Fig>{next.days}</Fig> days). Ordering early does
+          Rates are set by your installation date. The next legislated reduction takes effect{' '} <Fig>{formatDateLong(next.date)}</Fig> (in <Fig>{next.days}</Fig> days). Ordering early does
           not lock today’s factor if install slips past the step-down.
         </p>
       </Callout>
@@ -167,10 +164,8 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
 
   <h2 id="tiers">Tier structure since 1 May 2026</h2>
   <p>
-    From 1 May 2026 the flat STC factor was replaced with three capacity bands. Capacity in the first
-    <Fig>14</Fig> usable kWh attracts <Fig>100%</Fig> of the factor; the next <Fig>14</Fig> kWh
-    attracts <Fig>60%</Fig>; capacity from <Fig>28</Fig> to <Fig>50</Fig> kWh attracts
-    <Fig>15%</Fig>. Nothing above <Fig>50</Fig> usable kWh earns federal STCs under this program.
+    From 1 May 2026 the flat STC factor was replaced with three capacity bands. Capacity in the first <Fig>14</Fig> usable kWh attracts <Fig>100%</Fig> of the factor; the next <Fig>14</Fig> kWh
+    attracts <Fig>60%</Fig>; capacity from <Fig>28</Fig> to <Fig>50</Fig> kWh attracts <Fig>15%</Fig>. Nothing above <Fig>50</Fig> usable kWh earns federal STCs under this program.
   </p>
 
   <TierBar />
@@ -183,15 +178,13 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
   />
 
   <p>
-    That change hit larger batteries hardest — which is exactly why we published a dedicated
-    <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> explainer with
+    That change hit larger batteries hardest — which is exactly why we published a dedicated <a href="/battery-rebate/what-changed-may-2026/">what changed in May 2026</a> explainer with
     before/after dollars at common sizes.
   </p>
 
   <h2 id="schedule">Step-down schedule</h2>
   <p>
-    The STC factor declines on a legislated timetable through to program end in
-    <Fig>{rebates.meta.programEnd}</Fig>. From 2027 the schedule steps every January and July. Exact
+    The STC factor declines on a legislated timetable through to program end in <Fig>{rebates.meta.programEnd}</Fig>. From 2027 the schedule steps every January and July. Exact
     future factors are filled in here as the Clean Energy Regulator publishes them — rows marked TBA
     are announced dates without a confirmed factor yet.
   </p>
@@ -221,10 +214,7 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
 
   <h2 id="examples">Worked examples at current rates</h2>
   <p>
-    We use the same three reference systems across the site so numbers stay comparable: a
-    <Fig>10</Fig> kWh battery, a <Fig>13.5</Fig> kWh (Powerwall 3–class) battery, and a
-    <Fig>30</Fig> kWh large system. Rebates below assume STC net price
-    <Fig>${rebates.stcPrice.netAssumed}</Fig>.
+    We use the same three reference systems across the site so numbers stay comparable: a <Fig>10</Fig> kWh battery, a <Fig>13.5</Fig> kWh (Powerwall 3–class) battery, and a <Fig>30</Fig> kWh large system. Rebates below assume STC net price <Fig>${rebates.stcPrice.netAssumed}</Fig>.
   </p>
 
   <DataTable
@@ -255,11 +245,9 @@ const description = `Federal battery rebate is about $${perKwh.toFixed(0)} per u
   <div class="sources">
     <h2>Sources</h2>
     <ul>
-      <li>
-        <a href={rebates.meta.sourceUrl} rel="noopener">{rebates.meta.program}</a> — DCCEEW
+      <li> <a href={rebates.meta.sourceUrl} rel="noopener">{rebates.meta.program}</a> — DCCEEW
       </li>
-      <li>
-        <a href="https://www.cleanenergyregulator.gov.au/" rel="noopener">Clean Energy Regulator</a>
+      <li> <a href="https://www.cleanenergyregulator.gov.au/" rel="noopener">Clean Energy Regulator</a>
       </li>
       <li><a href="/what-changed/">Aussies R Us data changelog</a></li>
     </ul>

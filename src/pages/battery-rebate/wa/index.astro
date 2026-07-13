@@ -124,9 +124,7 @@ const description = `WA battery rebates that stack with the federal discount. Sy
     tiers ending at <Fig>{rebates.current.usableCapCapKwh}</Fig> kWh usable. Install date sets the rate.
   </p>
   <p>
-    For our reference <Fig>{ref.usableKwh}</Fig> kWh system, the federal rebate at current assumptions is{' '}
-    <Fig>{formatAud(federal.federalRebate)}</Fig> (
-    <Fig>{federal.stcCount}</Fig> STCs × <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>). That
+    For our reference <Fig>{ref.usableKwh}</Fig> kWh system, the federal rebate at current assumptions is{' '} <Fig>{formatAud(federal.federalRebate)}</Fig> ( <Fig>{federal.stcCount}</Fig> STCs × <Fig>{formatAud(rebates.stcPrice.netAssumed)}</Fig>). That
     figure is the floor of the stacking maths below — state money sits on top, it does not replace it.
   </p>
 
@@ -138,10 +136,7 @@ const description = `WA battery rebates that stack with the federal discount. Sy
     numericCols={[1, 2]}
   />
   <p>
-    Synergy’s listed rate is <Fig>{formatAud(synergy.value.amount)}</Fig> per usable kWh capped at{' '}
-    <Fig>{formatAud(synergy.cap!)}</Fig>. Horizon’s listed rate is{' '}
-    <Fig>{formatAud(horizon.value.amount)}</Fig> per usable kWh capped at{' '}
-    <Fig>{formatAud(horizon.cap!)}</Fig>. Higher Horizon support reflects greater network value in
+    Synergy’s listed rate is <Fig>{formatAud(synergy.value.amount)}</Fig> per usable kWh capped at{' '} <Fig>{formatAud(synergy.cap!)}</Fig>. Horizon’s listed rate is{' '} <Fig>{formatAud(horizon.value.amount)}</Fig> per usable kWh capped at{' '} <Fig>{formatAud(horizon.cap!)}</Fig>. Higher Horizon support reflects greater network value in
     regional and remote systems — it is not a Perth metro rate.
   </p>
 
@@ -153,8 +148,7 @@ const description = `WA battery rebates that stack with the federal discount. Sy
     battery is different in each footprint.
   </p>
   <p>
-    Practically: pull a recent electricity bill. If it says Synergy, use the Synergy row and the{' '}
-    <Fig>{formatAud(synergy.cap!)}</Fig> cap. If it says Horizon Power, use the Horizon row. Do not
+    Practically: pull a recent electricity bill. If it says Synergy, use the Synergy row and the{' '} <Fig>{formatAud(synergy.cap!)}</Fig> cap. If it says Horizon Power, use the Horizon row. Do not
     average the two — installers will not.
   </p>
 
@@ -169,23 +163,19 @@ const description = `WA battery rebates that stack with the federal discount. Sy
   <h2 id="debs">DEBS feed-in context</h2>
   <p>
     Synergy’s Distributed Energy Buyback Scheme (DEBS) pays for exported solar by time band. Our FiT
-    snapshot for WA currently spans about <Fig>{fits.minCPerKwh}</Fig>–
-    <Fig>{fits.maxCPerKwh}</Fig> c/kWh across reference offers (verified{' '}
+    snapshot for WA currently spans about <Fig>{fits.minCPerKwh}</Fig>– <Fig>{fits.maxCPerKwh}</Fig> c/kWh across reference offers (verified{' '}
     {formatDateLong(fits.lastVerified)}). Midday exports are often at the bottom of that range; evening
     bands are higher — but still a fraction of the retail import rate you avoid by self-consuming.
   </p>
   <p>
     That is why batteries show up in WA payback conversations even when the export tariff looks “fine”
     on paper. Shifting your own evening cooking and air-con load displaces expensive imports. Exporting
-    surplus at a few cents is the leftover, not the plan. See also our{' '}
-    <a href="/feed-in-tariffs/">feed-in tariff overview</a> and{' '}
-    <a href="/guides/is-a-battery-worth-it/">is a battery worth it?</a> guide.
+    surplus at a few cents is the leftover, not the plan. See also our{' '} <a href="/feed-in-tariffs/">feed-in tariff overview</a> and{' '} <a href="/guides/is-a-battery-worth-it/">is a battery worth it?</a> guide.
   </p>
 
   <h2 id="stacking">Worked stacking example: {ref.usableKwh} kWh</h2>
   <p>
-    Using the site’s Powerwall-class reference system (
-    <Fig>{ref.label}</Fig>, typical installed cost <Fig>{formatAud(ref.typicalInstalledCost)}</Fig>
+    Using the site’s Powerwall-class reference system ( <Fig>{ref.label}</Fig>, typical installed cost <Fig>{formatAud(ref.typicalInstalledCost)}</Fig>
     ):
   </p>
   <DataTable
@@ -200,23 +190,20 @@ const description = `WA battery rebates that stack with the federal discount. Sy
     numericCols={[1, 2]}
   />
   <p>
-    Notice the WA lines hit the cap: <Fig>{ref.usableKwh}</Fig> × Synergy’s per-kWh rate exceeds{' '}
-    <Fig>{formatAud(synergy.cap!)}</Fig>, so the state payment stops at the cap. Same pattern for
+    Notice the WA lines hit the cap: <Fig>{ref.usableKwh}</Fig> × Synergy’s per-kWh rate exceeds{' '} <Fig>{formatAud(synergy.cap!)}</Fig>, so the state payment stops at the cap. Same pattern for
     Horizon at <Fig>{formatAud(horizon.cap!)}</Fig>. Oversizing past the federal full-rate band (14 kWh)
     does not unlock more state dollars once the cap is reached.
   </p>
 
   <h2 id="perth-costs">Perth install-cost note</h2>
   <p>
-    Perth quotes for a mid-size battery commonly land in a band around the reference{' '}
-    <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> before rebates, but site works, inverter pairing,
+    Perth quotes for a mid-size battery commonly land in a band around the reference{' '} <Fig>{formatAud(ref.typicalInstalledCost)}</Fig> before rebates, but site works, inverter pairing,
     three-phase upgrades, and product choice move that number. Freight into WA and installer diaries also
     matter. Treat published “from” prices as marketing floors; the stacking table above is for comparing
     support dollars, not for locking a contract price.
   </p>
   <p>
-    For a package view that includes panels, see{' '}
-    <a href="/costs/solar-battery-package-perth/">solar + battery package costs in Perth</a>.
+    For a package view that includes panels, see{' '} <a href="/costs/solar-battery-package-perth/">solar + battery package costs in Perth</a>.
   </p>
 
   <h2 id="eligibility">Eligibility checklist (both layers)</h2>
@@ -242,17 +229,13 @@ const description = `WA battery rebates that stack with the federal discount. Sy
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
     </li>
-    <li>
-      <a href={synergy.sourceUrl}>{synergy.name}</a>
+    <li> <a href={synergy.sourceUrl}>{synergy.name}</a>
     </li>
-    <li>
-      <a href={horizon.sourceUrl}>{horizon.name}</a>
+    <li> <a href={horizon.sourceUrl}>{horizon.name}</a>
     </li>
-    <li>
-      <a href={fits.sourceUrl}>Synergy / DEBS reference</a>
+    <li> <a href={fits.sourceUrl}>Synergy / DEBS reference</a>
     </li>
   </ul>
 

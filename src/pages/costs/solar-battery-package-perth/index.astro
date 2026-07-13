@@ -102,15 +102,12 @@ const description = `Solar + battery package costs in Perth with WA stacking. Ex
     numericCols={[1]}
   />
   <p>
-    Full WA rules and Horizon variant:{' '}
-    <a href="/battery-rebate/wa/">WA battery rebate</a>. Federal-only calculator:{' '}
-    <a href="/battery-rebate/calculator/">rebate calculator</a>.
+    Full WA rules and Horizon variant:{' '} <a href="/battery-rebate/wa/">WA battery rebate</a>. Federal-only calculator:{' '} <a href="/battery-rebate/calculator/">rebate calculator</a>.
   </p>
 
   <h2 id="debs">DEBS and SWIS context</h2>
   <p>
-    Synergy’s DEBS export payments currently sit in about <Fig>{fits.minCPerKwh}</Fig>–
-    <Fig>{fits.maxCPerKwh}</Fig> c/kWh across time bands in our snapshot (verified{' '}
+    Synergy’s DEBS export payments currently sit in about <Fig>{fits.minCPerKwh}</Fig>– <Fig>{fits.maxCPerKwh}</Fig> c/kWh across time bands in our snapshot (verified{' '}
     {formatDateLong(fits.lastVerified)}). Midday exports are weak relative to evening import rates, which
     is why a correctly sized battery shows up in Perth payback chats even when “solar alone” still looks
     fine for daytime load.
@@ -138,14 +135,11 @@ const description = `Solar + battery package costs in Perth with WA stacking. Ex
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a>
     </li>
-    <li>
-      <a href={synergy.sourceUrl}>{synergy.name}</a>
+    <li> <a href={synergy.sourceUrl}>{synergy.name}</a>
     </li>
-    <li>
-      <a href={fits.sourceUrl}>Synergy / DEBS</a>
+    <li> <a href={fits.sourceUrl}>Synergy / DEBS</a>
     </li>
   </ul>
 

@@ -61,10 +61,8 @@ const description = `How the solar panel STC rebate works in Australia — zones
   <p>
     The household “solar rebate” on panels is not a cheque from a single government form — it is usually
     a point-of-sale discount funded by Small-scale Technology Certificates (STCs). Your installer creates
-    certificates based on system size, your climate zone, and the remaining deeming period to{' '}
-    <Fig>2030</Fig>, then assigns their value against the invoice. It is a different instrument from the
-    Cheaper Home Batteries Program, which currently works out to about{' '}
-    <Fig>{formatAud(perKwhBattery)}</Fig> per usable kWh in tier 1 for batteries.
+    certificates based on system size, your climate zone, and the remaining deeming period to{' '} <Fig>2030</Fig>, then assigns their value against the invoice. It is a different instrument from the
+    Cheaper Home Batteries Program, which currently works out to about{' '} <Fig>{formatAud(perKwhBattery)}</Fig> per usable kWh in tier 1 for batteries.
   </p>
 
   <h2 id="how">How panel STCs work</h2>
@@ -111,8 +109,7 @@ const description = `How the solar panel STC rebate works in Australia — zones
   />
   <p>
     Rough formula used here: floor(kW × zone rating × deeming years) × net STC price. Replace zone rating
-    and deeming with the live CER figures on your quote. For typical installed cost bands, see{' '}
-    <a href="/costs/6-6kw-solar-system-cost/">6.6 kW solar system cost</a>.
+    and deeming with the live CER figures on your quote. For typical installed cost bands, see{' '} <a href="/costs/6-6kw-solar-system-cost/">6.6 kW solar system cost</a>.
   </p>
 
   <h2 id="battery">Relationship to the battery program</h2>
@@ -120,8 +117,7 @@ const description = `How the solar panel STC rebate works in Australia — zones
     Panel STCs and the battery rebate are <strong>separate but combinable</strong> on a solar-plus-battery
     job when each technology meets its own rules. Do not let a quote mash them into one unexplained
     “government discount” line. Ask for panel STC value and battery Cheaper Home Batteries value as
-    distinct rows — then check the battery line with our{' '}
-    <a href="/battery-rebate/calculator/">calculator</a>.
+    distinct rows — then check the battery line with our{' '} <a href="/battery-rebate/calculator/">calculator</a>.
   </p>
 
   <p>
@@ -130,13 +126,11 @@ const description = `How the solar panel STC rebate works in Australia — zones
 
   <h2 id="sources">Sources</h2>
   <ul>
-    <li>
-      <a href="https://www.cleanenergyregulator.gov.au/RET/Scheme-participants-and-industry/Power-stations">
+    <li> <a href="https://www.cleanenergyregulator.gov.au/RET/Scheme-participants-and-industry/Power-stations">
         Clean Energy Regulator — small-scale scheme
       </a>
     </li>
-    <li>
-      <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> (batteries — separate)
+    <li> <a href={rebates.meta.sourceUrl}>{rebates.meta.program}</a> (batteries — separate)
     </li>
   </ul>
 
