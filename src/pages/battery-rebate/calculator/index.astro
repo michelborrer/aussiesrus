@@ -274,7 +274,14 @@ const description = `Estimate your Cheaper Home Batteries discount from usable k
     padding: var(--s-3);
     border: 1px solid var(--line);
     border-radius: var(--r-s);
+    background: var(--paper);
+    color: var(--ink);
     font: inherit;
+  }
+
+  input[type='range'] {
+    min-height: 0;
+    padding: 0;
   }
 
   .presets {
@@ -289,12 +296,20 @@ const description = `Estimate your Cheaper Home Batteries discount from usable k
     border: 1px solid var(--line);
     border-radius: var(--r-s);
     background: var(--paper-dim);
+    color: var(--ink);
     font: inherit;
     cursor: pointer;
   }
 
   .chip:hover {
     border-color: var(--eucalypt);
+  }
+
+  .chip--active,
+  .chip[aria-pressed='true'] {
+    background: var(--sun);
+    color: var(--ink);
+    border-color: var(--sun);
   }
 
   .advanced summary {

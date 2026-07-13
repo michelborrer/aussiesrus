@@ -78,7 +78,18 @@ export function initCalculator(root: HTMLElement, config: CalcConfig) {
     kwhSlider.value = String(v);
   };
 
+  const syncPresetChips = () => {
+    const kwh = Number(kwhInput.value);
+    root.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((btn) => {
+      const sys = config.systems.find((s) => s.id === btn.dataset.preset);
+      const active = Boolean(sys && Math.abs(sys.usableKwh - kwh) < 0.001);
+      btn.classList.toggle('chip--active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  };
+
   root.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', 'false');
     btn.addEventListener('click', () => {
       const id = btn.dataset.preset!;
       const sys = config.systems.find((s) => s.id === id);
@@ -158,6 +169,8 @@ export function initCalculator(root: HTMLElement, config: CalcConfig) {
       cost: cost != null && Number.isFinite(cost) ? cost : undefined,
       stc: stcPrice,
     });
+
+    syncPresetChips();
   };
 
   const debounced = debounce(recompute, 150);
