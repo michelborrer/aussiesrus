@@ -28,7 +28,13 @@ function isActive(href: string): boolean {
     </a>
 
     <details class="nav-mobile">
-      <summary class="nav-toggle">Menu</summary>
+      <summary class="nav-toggle" aria-label="Menu">
+        <span class="hamburger" aria-hidden="true">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </span>
+      </summary>
       <nav class="nav-panel" aria-label="Primary">
         <ul class="nav-panel-list">
           {
@@ -171,23 +177,65 @@ function isActive(href: string): boolean {
   .nav-toggle {
     list-style: none;
     cursor: pointer;
-    min-height: 44px;
-    min-width: 44px;
+    width: 44px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 var(--s-4);
+    padding: 0;
     border: 1px solid var(--line);
     border-radius: var(--r-s);
     background: var(--paper);
-    font: inherit;
-    font-weight: 600;
-    font-size: var(--t-meta);
     color: var(--ink);
   }
 
   .nav-toggle::-webkit-details-marker {
     display: none;
+  }
+
+  .hamburger {
+    position: relative;
+    width: 20px;
+    height: 14px;
+  }
+
+  .hamburger .bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition:
+      top 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .hamburger .bar:nth-child(1) {
+    top: 0;
+  }
+
+  .hamburger .bar:nth-child(2) {
+    top: 6px;
+  }
+
+  .hamburger .bar:nth-child(3) {
+    top: 12px;
+  }
+
+  .nav-mobile[open] .hamburger .bar:nth-child(1) {
+    top: 6px;
+    transform: rotate(45deg);
+  }
+
+  .nav-mobile[open] .hamburger .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-mobile[open] .hamburger .bar:nth-child(3) {
+    top: 6px;
+    transform: rotate(-45deg);
   }
 
   .nav-panel {
@@ -257,7 +305,8 @@ function isActive(href: string): boolean {
 
   .nav-list {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    align-items: center;
     gap: var(--s-1);
     list-style: none;
     margin: 0;
@@ -279,6 +328,7 @@ function isActive(href: string): boolean {
     text-decoration: none;
     font-weight: 600;
     font-size: var(--t-meta);
+    white-space: nowrap;
     border-bottom: 2px solid transparent;
     cursor: pointer;
     background: none;
@@ -342,7 +392,7 @@ function isActive(href: string): boolean {
     color: var(--eucalypt);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .nav-desktop {
       display: none;
     }
@@ -352,7 +402,7 @@ function isActive(href: string): boolean {
     }
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 901px) {
     .nav-mobile {
       display: none;
     }
