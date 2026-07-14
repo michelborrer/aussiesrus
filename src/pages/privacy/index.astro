@@ -1,5 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
+import ContactEmail from '../../components/ContactEmail.astro';
 import { SITE } from '../../lib/site';
 
 const description = `Privacy policy for ${SITE.name} — what we collect, ads, affiliate links, and how quote/contact form data may be shared with partners.`;
@@ -12,7 +13,7 @@ const description = `Privacy policy for ${SITE.name} — what we collect, ads, a
   updated="2026-07-12"
   showMiniBoard={false}
 >
-  <p>Last updated: 12 July 2026. Operator: {SITE.name}. Contact: {SITE.contactEmail}.</p>
+  <p>Last updated: 12 July 2026. Operator: {SITE.name}. Contact: <ContactEmail />.</p>
 
   <h2>Who we are</h2>
   <p>
@@ -77,7 +78,7 @@ const description = `Privacy policy for ${SITE.name} — what we collect, ads, a
 
   <h2>Access and correction</h2>
   <p>
-    Email {SITE.contactEmail} to request access to, or correction of, personal information we hold about you. You
+    Email <ContactEmail /> to request access to, or correction of, personal information we hold about you. You
     may also complain to the Office of the Australian Information Commissioner if you are not satisfied
     with our response.
   </p>

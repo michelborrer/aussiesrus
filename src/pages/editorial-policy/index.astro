@@ -1,5 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
+import ContactEmail from '../../components/ContactEmail.astro';
 import { SITE } from '../../lib/site';
 
 const description = `Editorial policy for ${SITE.name}: primary sources, corrections, AI-assisted drafting, and independence standards.`;
@@ -31,7 +32,7 @@ const description = `Editorial policy for ${SITE.name}: primary sources, correct
 
   <h2>Corrections</h2>
   <p>
-    If we get a fact wrong, email {SITE.contactEmail} with the URL, the incorrect statement, and a primary-source
+    If we get a fact wrong, email <ContactEmail /> with the URL, the incorrect statement, and a primary-source
     link. We correct the page, update the data file when needed, and note significant corrections in the
     changelog.
   </p>

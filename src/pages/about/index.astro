@@ -1,6 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
 import Fig from '../../components/Fig.astro';
+import ContactEmail from '../../components/ContactEmail.astro';
 import { SITE } from '../../lib/site';
 import { getRebates } from '../../lib/data';
 import { formatDateLong } from '../../lib/rebate';
@@ -42,7 +43,7 @@ const description = `Who runs ${SITE.name}: an independent, WA-based publisher. 
     with local depth on purpose.
   </p>
   <p>
-    Contact: <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> · <a href="/contact/">Contact form</a>.
+    Contact: <ContactEmail /> · <a href="/contact/">Contact form</a>.
   </p>
 
   <h2 id="why">Why it exists</h2>

@@ -1,0 +1,63 @@
+---
+import { SITE } from '../lib/site';
+
+interface Props {
+  /** Visible link text; defaults to the address itself. */
+  label?: string;
+}
+
+const { label } = Astro.props;
+const email = SITE.contactEmail;
+const [user, domain] = email.split('@');
+// ROT13-ish hex obfuscation for the href; assembled in JS so bots scraping HTML
+// don't get a clean mailto:. Cloudflare Email Address Obfuscation (Scrape Shield)
+// should also be ON for belt-and-braces on any leftover plain addresses.
+const encoded = [...email]
+  .map((ch) => (ch.charCodeAt(0) + 7).toString(16).padStart(2, '0'))
+  .join('');
+---
+
+<a
+  class="contact-email"
+  href="#"
+  data-e={encoded}
+  data-u={user}
+  data-d={domain}
+  aria-label={`Email ${SITE.name}`}
+>
+  {label ?? `${user}\u200B@{domain}`}
+</a>
+
+<script is:inline>
+  (() => {
+    function decode(hex) {
+      let out = '';
+      for (let i = 0; i < hex.length; i += 2) {
+        out += String.fromCharCode(parseInt(hex.slice(i, i + 2), 16) - 7);
+      }
+      return out;
+    }
+    document.querySelectorAll('a.contact-email[data-e]').forEach((el) => {
+      const addr = decode(el.getAttribute('data-e') || '');
+      if (!addr) return;
+      el.setAttribute('href', 'mailto:' + addr);
+      el.addEventListener(
+        'click',
+        (e) => {
+          if (el.getAttribute('href') === '#') {
+            e.preventDefault();
+            el.setAttribute('href', 'mailto:' + addr);
+            window.location.href = 'mailto:' + addr;
+          }
+        },
+        { once: true },
+      );
+    });
+  })();
+</script>
+
+<style>
+  .contact-email {
+    unicode-bidi: plaintext;
+  }
+</style>

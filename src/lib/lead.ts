@@ -9,13 +9,17 @@ export const leadSchema = z.object({
   message: z.string().max(5000).optional(),
   consent: z.literal('true').optional(),
   company: z.string().optional(),
+  website: z.string().optional(),
   'cf-turnstile-response': z.string().optional(),
 });
 
 export type LeadInput = z.infer<typeof leadSchema>;
 
-export function isHoneypotTriggered(company: string | undefined): boolean {
-  return Boolean(company && company.trim() !== '');
+export function isHoneypotTriggered(
+  company: string | undefined,
+  website?: string | undefined,
+): boolean {
+  return Boolean((company && company.trim() !== '') || (website && website.trim() !== ''));
 }
 
 export function isValidAuPhone(phone: string | undefined): boolean {
@@ -32,7 +36,7 @@ export function validateLeadPayload(raw: unknown): LeadValidationResult {
   if (!parsed.success) return { ok: false, error: 'invalid' };
 
   const data = parsed.data;
-  if (isHoneypotTriggered(data.company)) return { ok: false, error: 'honeypot' };
+  if (isHoneypotTriggered(data.company, data.website)) return { ok: false, error: 'honeypot' };
 
   if (data.type === 'lead' && data.consent !== 'true') {
     return { ok: false, error: 'consent_required' };

@@ -10,6 +10,7 @@ describe('/api/lead validation', () => {
 
   it('rejects honeypot fills', () => {
     expect(isHoneypotTriggered('Acme Corp')).toBe(true);
+    expect(isHoneypotTriggered(undefined, 'https://spam.test')).toBe(true);
     const r = validateLeadPayload({
       type: 'contact',
       name: 'Sam',
@@ -19,6 +20,16 @@ describe('/api/lead validation', () => {
     });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toBe('honeypot');
+
+    const websiteBot = validateLeadPayload({
+      type: 'contact',
+      name: 'Sam',
+      email: 'sam@example.com',
+      website: 'https://spam.test',
+      message: 'hi',
+    });
+    expect(websiteBot.ok).toBe(false);
+    if (!websiteBot.ok) expect(websiteBot.error).toBe('honeypot');
   });
 
   it('requires consent and AU phone/postcode for leads', () => {

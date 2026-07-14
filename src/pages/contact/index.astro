@@ -1,6 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
 import QuoteForm from '../../components/QuoteForm.astro';
+import ContactEmail from '../../components/ContactEmail.astro';
 import { SITE } from '../../lib/site';
 
 const description = `Contact ${SITE.name} — questions about rebate figures, corrections, or press.`;
@@ -14,7 +15,7 @@ const description = `Contact ${SITE.name} — questions about rebate figures, co
   showMiniBoard={false}
 >
   <p>
-    For corrections, data questions, or press: email{' '} <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> or use the form below. We are not a same-day
+    For corrections, data questions, or press: email <ContactEmail /> or use the form below. We are not a same-day
     installer dispatch desk — for install quotes see the (currently unlisted){' '} <a href="/quotes/">quote form</a> when you are ready.
   </p>
   <p>
