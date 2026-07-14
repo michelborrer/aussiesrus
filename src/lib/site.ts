@@ -2,10 +2,14 @@ export const SITE = {
   name: 'Aussies R Us',
   lockup: "Aussies R Us — Australia's independent solar & battery guide",
   url: 'https://aussiesrus.com.au',
+  /** Canonical site origin with trailing slash (matches trailingSlash: 'always'). */
+  origin: 'https://aussiesrus.com.au/',
   description:
     "Australia's independent solar & battery guide. Every figure verified against the Clean Energy Regulator.",
   contactEmail: 'hello@aussiesrus.com.au',
   locale: 'en-AU',
+  ogImage: '/og-default.png',
+  logo: '/logo.png',
 } as const;
 
 export const FOOTER_DISCLOSURE =
@@ -38,6 +42,8 @@ export const NAV = [
       { label: '6.6 kW solar cost', href: '/costs/6-6kw-solar-system-cost/' },
       { label: 'Solar + battery Perth', href: '/costs/solar-battery-package-perth/' },
       { label: 'Is a battery worth it?', href: '/guides/is-a-battery-worth-it/' },
+      { label: 'Solar rebate', href: '/solar-rebate/' },
+      { label: 'Feed-in tariffs', href: '/feed-in-tariffs/' },
     ],
   },
   {

@@ -16,6 +16,9 @@ interface Props {
   canonical?: string;
   noindex?: boolean;
   ogTitle?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  dateModified?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -25,32 +28,48 @@ const {
   canonical,
   noindex = false,
   ogTitle,
+  ogType = 'website',
+  ogImage = SITE.ogImage,
+  dateModified,
   jsonLd = [],
 } = Astro.props;
 
 const pageTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE.url).href;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE.origin).href;
+const ogImageUrl = new URL(ogImage, SITE.origin).href;
+const logoUrl = new URL(SITE.logo, SITE.origin).href;
 const rebates = getRebates();
 
 const orgLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: SITE.name,
-  url: SITE.url,
+  url: SITE.origin,
   email: SITE.contactEmail,
   description: SITE.description,
+  logo: {
+    '@type': 'ImageObject',
+    url: logoUrl,
+  },
 };
 
 const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE.name,
-  url: SITE.url,
+  url: SITE.origin,
   description: SITE.description,
   inLanguage: 'en-AU',
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.origin,
+  },
 };
 
-const schemas = [orgLd, websiteLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])];
+const schemas = [orgLd, websiteLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])].filter(
+  (s) => s && Object.keys(s).length > 0,
+);
 ---
 
 <!doctype html>
@@ -60,16 +79,34 @@ const schemas = [orgLd, websiteLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    {!noindex && <link rel="canonical" href={canonicalUrl} />}
     {noindex && <meta name="robots" content="noindex,nofollow" />}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={ogTitle ?? pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content="en_AU" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.name} — Australia's independent solar & battery guide`} />
+    {ogType === 'article' && dateModified && (
+      <meta property="article:modified_time" content={dateModified} />
+    )}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle ?? pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} — what changed`}
+      href="/rss.xml"
+    />
+    <meta name="theme-color" content="#f2a900" />
     <meta name="color-scheme" content="light" />
     {
       schemas.map((s) => (

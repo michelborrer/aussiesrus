@@ -11,9 +11,15 @@ interface Props {
 }
 
 const { items } = Astro.props;
+const path = Astro.url.pathname;
 
 // Home is always rendered first, so drop any redundant Home passed by callers.
-const crumbs = items.filter((item) => item.label !== 'Home' && item.href !== '/');
+// Intermediate crumbs that link to the current page are not real parents — drop href.
+const crumbs = items
+  .filter((item) => item.label !== 'Home' && item.href !== '/')
+  .map((item) =>
+    item.href && item.href === path ? { label: item.label } : item,
+  );
 
 const ld = {
   '@context': 'https://schema.org',
@@ -23,13 +29,13 @@ const ld = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: SITE.url,
+      item: SITE.origin,
     },
     ...crumbs.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 2,
       name: item.label,
-      ...(item.href ? { item: new URL(item.href, SITE.url).href } : {}),
+      ...(item.href ? { item: new URL(item.href, SITE.origin).href } : {}),
     })),
   ],
 };

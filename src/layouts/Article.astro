@@ -34,26 +34,54 @@ const {
 } = Astro.props;
 
 const dateModified = maxDate(updated, verified);
-const articleLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: title,
-  description,
-  dateModified,
-  author: {
-    '@type': 'Organization',
-    name: SITE.name,
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: SITE.name,
-    url: SITE.url,
-  },
-  mainEntityOfPage: new URL(Astro.url.pathname, SITE.url).href,
-};
+const pageUrl = new URL(Astro.url.pathname, SITE.origin).href;
+const ogImageUrl = new URL(SITE.ogImage, SITE.origin).href;
+const logoUrl = new URL(SITE.logo, SITE.origin).href;
+
+const articleLd = noindex
+  ? null
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description,
+      datePublished: updated,
+      dateModified,
+      image: [ogImageUrl],
+      author: {
+        '@type': 'Organization',
+        name: SITE.name,
+        url: SITE.origin,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: SITE.name,
+        url: SITE.origin,
+        logo: {
+          '@type': 'ImageObject',
+          url: logoUrl,
+        },
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+    };
+
+const extraLd = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+const schemas = [articleLd, ...extraLd].filter(
+  (s): s is Record<string, unknown> => Boolean(s && Object.keys(s).length > 0),
+);
 ---
 
-<Base title={title} description={description} noindex={noindex} jsonLd={[articleLd, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])]}>
+<Base
+  title={title}
+  description={description}
+  noindex={noindex}
+  ogType={noindex ? 'website' : 'article'}
+  dateModified={dateModified}
+  jsonLd={schemas}
+>
   <div class="article-shell">
     <div class="wrap article-grid">
       <div class="article-main">

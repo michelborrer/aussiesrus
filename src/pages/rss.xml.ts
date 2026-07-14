@@ -14,7 +14,8 @@ export async function GET(context: APIContext) {
       title: entry.summary.slice(0, 120) + (entry.summary.length > 120 ? '…' : ''),
       description: `${entry.summary} Affected: ${entry.affectedPages.join(', ')}`,
       pubDate: new Date(`${entry.date}T00:00:00Z`),
-      link: '/what-changed/',
+      // Unique per entry (matches id on /what-changed/) so feed GUIDs never collide.
+      link: `/what-changed/#e-${entry.date}`,
     })),
   });
 }
